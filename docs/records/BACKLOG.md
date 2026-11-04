@@ -4,28 +4,33 @@
 
 | pitanje | zašto je važno |
 |---|---|
-| OK za PLAN_V1 i ADR-005 | bez toga nema koda |
-| Prvi dugi video za probu (nekoliko minuta govora ili gameplaya) | K2 i K5 mjere na stvarnom materijalu |
-| Jezik isječaka: hrvatski, engleski ili oba | hrvatski prijepis ima oko 34 % WER, engleski znatno manje |
-| Kanali: koji YouTube, Twitch, Instagram, Facebook i TikTok računi su Leonovi | zapis prava i objava |
+| OK za dizajn `docs/superpowers/specs/2026-11-04-clipping-alat-design.md` | bez toga nema plana cigli ni koda |
+| Računi: Gmail + Caleb Hammer (TikTok, Instagram poslovni + Facebook stranica, X), ClubWPT Gold (Instagram, YouTube); povezati na Clipping.net; PayPal; pridružiti se kampanjama | C4 i prva stvarna serija |
+| Prvi tjedan ručno 1 do 2 objave dnevno s mobitela (zagrijavanje računa) | API objava tek na računima s poviješću |
+| Vrijeme za pregled serije dnevno | određuje veličinu serije i raspored |
+| Razgovor s računovođom prije prve veće isplate (PayPal iz inozemstva) | Leonova odgovornost; nije porezni savjet |
 | Pisani dogovor s naručiteljem BOORA o vlasništvu koda | smije li se BOORA kod ikad koristiti ovdje |
-| Razgovor s računovođom (obrt, PDV, studentski status) | prihodi s platformi i kampanja |
-| Mjesec OpusClip Pro (29 $) kao mjerilo kvalitete prije K4 | zlatna usporedba za naše isječke |
-| Clipping.net: ima li API za clippere (pitati podršku) | automatski popis kampanja i prijava poveznica |
+| Whop i druge platforme kampanja | parkirano dok Clipping.net ne donese prvu isplatu |
 
 ## Provjeriti tehnički
 
 | stavka | cigla |
 |---|---|
-| MediaPipe radi na Pythonu 3.12 na Windowsu | K4 |
-| Brzina faster-whisper na CPU-u (turbo, int8) za sat videa | K2 |
-| yt-dlp za Leonov YouTube i Twitch: treba li JavaScript runtime i PO token | K1 |
-| YouTube upload neprovjerenog projekta: ostaje li privatan | K6 |
+| Parakeet TDT 0.6B v3: licenca (NVIDIA Open Model License) dopušta komercijalnu uporabu; onnx-asr daje vremena riječi; brzina na Leonovu CPU-u | C1 |
+| Rezerva ako Parakeet padne: faster-whisper `medium` s 12 niti (autoclip je koristio 1 do 4) | C1 |
+| MediaPipe na Pythonu 3.12 na Windowsu (proba: radi u autoclip venvu na 3.11) | C2 |
+| Instagram `paid partnership` oznaka kroz Graph API: koje polje, za koje račune | C4 |
+| YouTube upload neprovjerenog projekta: ostaje li javan | C4 |
+| yt-dlp za YouTube poveznice iz briefa: treba li JavaScript runtime i PO token (proba: radilo bez) | C3 |
+| Clipping.net: ima li API za clippere (pitati podršku) | C5 |
 
 ## Parkirano
 
 | ideja | napomena |
 |---|---|
-| Vlastiti GTA 6 kanal (od 19. 11.) | Leon igra i govori; alat reže, kadrira i titla; 1 do 3 objave dnevno uz pregled |
-| Plaćene clipping kampanje (Clipping.net, Whop) | izvorne datoteke ručno iz dashboarda; nema automatizacije tuđeg dashboarda |
-| Telegram sučelje | tek ako lokalni tok dokaže vrijednost |
+| Desktop app za statistiku i zaradu (Tauri) | čita istu SQLite bazu; nakon C5 |
+| Vlastiti GTA 6 kanal | Leon je 4. 11. odlučio da projekt radi clipping za druge; vidi ADR-007 |
+| Plaćeni posrednik za TikTok (Upload-Post, Ayrshare) | samo ako ručna objava postane usko grlo; provjeriti da koriste auditiran službeni klijent |
+| OpusClip kao mjerilo | Leon ne plaća; mjerilo su isječci iz probe i stvarni pregledi |
+| Telegram sučelje | nije potrebno; pregled ide kroz mapu i `PREGLED.md` |
+| Hrvatski jezik | nije cilj; kampanje su engleske |

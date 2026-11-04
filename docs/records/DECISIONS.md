@@ -38,13 +38,16 @@ računa; platforme ne monetiziraju ponovno objavljen tuđi sadržaj (`docs/istra
 **Odluka.** Ulazi su Leonove datoteke, linkovi na Leonove kanale (YouTube, Twitch) i izvorne datoteke iz
 plaćenih clipping kampanja uz dopuštenje vlasnika. Svaki ulaz bilježi čiji je.
 
-## ADR-005 — Claude bira kandidate, program određuje vremena i kadar
-**Datum:** 2026-11-04 · **Status:** prijedlog, čeka Leonov OK uz PLAN_V1
+## ADR-005 — Claude bira riječima, program određuje vremena i kadar
+**Datum:** 2026-11-04 · **Status:** ✅ Leon, potvrđeno probom (`docs/istrazivanje/PROBA_AUTOCLIP.md`)
 
-**Odluka.** Program slaže kandidate iz granica rečenica, scena i glasnoće. Claude vraća samo ID kandidata,
-naslov, udicu i razlog. Odabir koji pokazuje na nepostojeći kandidat se odbija.
+**Odluka.** Program daje Claudeu cijeli prijepis s indeksom uz svaku riječ. Claude vraća indeks prve i zadnje
+riječi, naslov, udicu, ocjenu i razlog; nikad sekunde ni piksele. Program pomiče rezove na granicu rečenice ili
+tišine, odbija indekse izvan prijepisa i trajanja izvan profila kampanje, i sam kadrira.
 
-**Posljedice.** Rez nikad ne presiječe riječ ni rečenicu; izbor je provjerljiv.
+**Posljedice.** Rez nikad ne presiječe riječ; izbor je provjerljiv; nema plaćenog API-ja (Claude Code u sesiji ili
+`claude -p`). Raniji oblik (program unaprijed slaže kandidate) je napušten jer je proba pokazala da Claude dobro
+bira iz cijelog prijepisa od 17.000 riječi.
 
 ## ADR-006 — Objava samo preko službenih API-ja
 **Datum:** 2026-11-04 · **Status:** ✅ Leon (iz istraživanja)
@@ -52,3 +55,56 @@ naslov, udicu i razlog. Odabir koji pokazuje na nepostojeći kandidat se odbija.
 **Odluka.** YouTube Data API, Instagram i Facebook Graph API. TikTok ostaje ručna objava jer audit odbija alate
 za objavu na vlastite račune. Neslužbeni alati (instagrapi, tiktok-uploader, automatizacija preglednika) ne
 ulaze: krše uvjete i vode do zabrane računa.
+
+## ADR-007 — Projekt radi plaćene clipping kampanje za druge kreatore, na engleskom
+**Datum:** 2026-11-04 · **Status:** ✅ Leon
+
+**Kontekst.** Prvi nacrt plana ciljao je Leonov vlastiti video i GTA 6 kanal. Leon je to odbio: posao je clipping
+za druge kreatore kroz plaćene kampanje (Clipping.net, kasnije možda Whop), gdje se plaća po 100.000 provjerenih
+pregleda na clipperovim vlastitim računima.
+
+**Odluka.** Ulazi su isključivo videi iz kampanja (brief daje poveznicu ili datoteku). Jezik je engleski, publika
+globalna, cilj najviša kvaliteta. Prve kampanje: Caleb Hammer i ClubWPT Gold. Vlastiti kanal, GTA 6 i hrvatski su
+parkirani (BACKLOG).
+
+**Posljedice.** Profil kampanje (YAML) nosi pravila briefa: platforme, žig, obvezni tekst, računi. Alat ne
+objavljuje na platformi koju kampanja ne plaća. Zapis prava = kampanja + brief + datum (ADR-004).
+
+## ADR-008 — Prijepis: Parakeet TDT na CPU-u umjesto Whispera
+**Datum:** 2026-11-04 · **Status:** prijedlog, potvrđuje cigla C1 (mjerenje i licenca)
+
+**Kontekst.** Proba: faster-whisper `large-v3-turbo` na Leonovu CPU-u (12 jezgri, bez grafičke) trajao je 103 minute
+za 90 minuta videa i koristio 1 do 4 jezgre.
+
+**Odluka.** Prijepis radi NVIDIA Parakeet TDT 0.6B v3 kroz `onnx-asr` (bez torcha), s VAD-om u dijelovima.
+Uvjet: ispod 10 minuta za zlatni video i licenca (NVIDIA Open Model License) dopušta komercijalnu uporabu.
+Rezerva: faster-whisper `medium` s 12 niti.
+
+**Posljedice.** Isti oblik izlaza kao u probi (riječi s vremenima). Cenzura psovki više ne dolazi besplatno iz
+modela; program ima popis riječi.
+
+## ADR-009 — autoclip (MIT) je uzor, ne ovisnost
+**Datum:** 2026-11-04 · **Status:** ✅ Leon (kvaliteta probe prihvaćena)
+
+**Odluka.** Kadriranje po licu (MediaPipe, glatka putanja kadra, jedan FFmpeg prolaz) i karaoke ASS titlovi
+(pysubs2, libass) grade se po uzoru na artbyjazi/autoclip, uz navođenje izvora i MIT napomenu. autoclip se ne
+uzima kao ovisnost jer nosi vlastiti LLM sloj, bazu, Whisper i web sučelje. Graditelj smije vendorati pojedine
+module uz zapis ovdje.
+
+## ADR-010 — Instagram i YouTube kroz API, TikTok i X ručno iz pripremljene mape
+**Datum:** 2026-11-04 · **Status:** ✅ Leon
+
+**Odluka.** Instagram (Graph API) i YouTube (Data API) objavljuju se iz reda s limitima po računu. TikTok (API bez
+audita objavljuje samo privatno) i X (API za video je plaćen) objavljuje Leon s mobitela iz mape
+`mobitel/<racun>/` s MP4 i opisom; alat čeka poveznicu. Dok računi nemaju tjedan ručne povijesti, sve platforme
+idu ručno (zagrijavanje). Dopunjuje ADR-006.
+
+## ADR-011 — Jedan račun po kreatoru i platformi; oznaka plaćene suradnje uvijek
+**Datum:** 2026-11-04 · **Status:** ✅ Leon
+
+**Odluka.** Svaka kampanja ima vlastite račune (npr. Caleb Hammer: TikTok, Instagram, X). Računi se ne dijele
+među kampanjama. Svaka objava nosi oznaku plaćene suradnje (platformina oznaka gdje API dopušta, i "#ad" /
+"Paid partnership with <kreator>" u opisu). Isti isječak se nikad ne objavljuje dvaput na istoj platformi, a
+isječci koji se preklapaju više od 50 % s već objavljenima u istoj kampanji se odbijaju.
+
+**Posljedice.** Kazna za spam ili prava pogađa jedan račun, ne sve. Objave ostaju javne do isplate (pravilo Clipping.neta).
