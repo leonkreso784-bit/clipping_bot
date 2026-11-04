@@ -25,4 +25,6 @@ izlaz/
 
 # modeli i materijali kampanja (žigovi) ostaju izvan gita
 models/
-kampanje/*/
+kampanje/*
+!kampanje/*.yaml
+!kampanje/README.md

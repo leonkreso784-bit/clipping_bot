@@ -83,13 +83,21 @@ def probe(path: Path) -> MediaInfo:
         duration_s=duration,
         width=int(video.get("width", 0)) if video else 0,
         height=int(video.get("height", 0)) if video else 0,
-        fps=_fps(video.get("avg_frame_rate") or video.get("r_frame_rate")) if video else 0.0,
+        fps=_pick_fps(video) if video else 0.0,
         has_audio=audio,
         has_video=video is not None,
     )
 
 
+def _pick_fps(video: dict[str, Any]) -> float:
+    """avg_frame_rate je "0/0" za VFR izvore; tada vrijedi r_frame_rate."""
+    return _fps(video.get("avg_frame_rate")) or _fps(video.get("r_frame_rate"))
+
+
 def _fps(value: str | None) -> float:
-    if not value or value == "0/0":
+    if not value:
         return 0.0
-    return float(Fraction(value))
+    try:
+        return float(Fraction(value))
+    except (ZeroDivisionError, ValueError):
+        return 0.0
