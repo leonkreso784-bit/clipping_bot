@@ -1,0 +1,20 @@
+# tajne
+.env
+.env.*
+# okruženje
+.venv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+# izvorni mediji, radne datoteke i izlazi (nikad u git)
+data/
+izlaz/
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.m4a
+*.mp3
