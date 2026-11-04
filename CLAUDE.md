@@ -50,7 +50,8 @@ Instalirani su FFmpeg 9.0.2 i uv; yt-dlp nije.
 
 ## Komande
 
-`/next` (preporuka sljedeće cigle) · `/brick <opis>` (jedna cigla od kraja do kraja).
+`/next` (preporuka sljedeće cigle) · `/brick <opis>` (jedna cigla od kraja do kraja). Leži u
+`.claude/commands/`, namjerno izvan gita (Leonov globalni gitignore).
 
 ## Rad s agentima
 
