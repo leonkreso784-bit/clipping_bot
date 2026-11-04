@@ -1,7 +1,8 @@
 # PLAN_V1 — alat za plaćene clipping kampanje
 
-**Status:** nacrt, 4. 11. 2026. Dizajn je u `docs/superpowers/specs/2026-11-04-clipping-alat-design.md` i **čeka Leonov OK**.
-Nakon OK-a dizajna ovaj plan se razrađuje u cigle (`superpowers:writing-plans`) i tek onda kreće kod.
+**Status:** 4. 11. 2026. Dizajn `docs/superpowers/specs/2026-11-04-clipping-alat-design.md` je odobren. Plan izvedbe cigli
+C0 do C3 po zadacima: `docs/superpowers/plans/2026-11-04-clipping-cjevovod-c0-c3.md` (čeka Leonov OK, pa `/brick C0`).
+C4 i C5 dobivaju vlastiti plan kad računi postoje.
 
 **Cilj:** jedan dugi video iz kampanje (60 do 120 min) → 6 do 10 isječaka 9:16 s titlovima, žigom i tekstom po
 briefu, u manje od 30 minuta na Leonovu CPU-u, bez ručnih koraka između "kreni" i mape za pregled; nakon odobrenja
@@ -27,7 +28,7 @@ artbyjazi/autoclip (MIT) je uzor za kadriranje i titlove, ne ovisnost. Proba: `d
 | 7. objava: Instagram i YouTube iz reda s limitima; TikTok i X mapa za mobitel | program / Leon | poveznice u bazi |
 | 8. prijava poveznica na Clipping.net, praćenje pregleda i isplata | Leon / program | tablice `objava`, `pregledi`, `isplata` |
 
-## Cigle (prijedlog redoslijeda; detalji nakon OK-a dizajna)
+## Cigle (detalji po zadacima u planu izvedbe)
 
 | cigla | sadržaj | dokaz |
 |---|---|---|
