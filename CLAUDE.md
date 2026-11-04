@@ -17,7 +17,7 @@ Iz tog repozitorija **ne kopiramo kod** dok vlasništvo nije pisano dogovoreno (
 
 ## Stanje
 
-**Nema koda.** Dizajn `docs/superpowers/specs/2026-11-04-clipping-alat-design.md` je odobren (4. 11. 2026.); plan cigli
+**Cigla C0 u tijeku** (grana `feature/c0`). Dizajn `docs/superpowers/specs/2026-11-04-clipping-alat-design.md` je odobren (4. 11. 2026.); plan cigli
 `docs/plan/PLAN_V1.md` i `docs/superpowers/plans/` se razrađuju iz njega. Proba s autoclipom: `docs/istrazivanje/PROBA_AUTOCLIP.md`.
 **Svaku sesiju počni od `docs/records/SLJEDECA_SESIJA.md`.**
 
@@ -38,6 +38,11 @@ Iz tog repozitorija **ne kopiramo kod** dok vlasništvo nije pisano dogovoreno (
    nekomercijalni i "research only" ne).
 9. **Tajne, izvorni mediji i izlazni videi ne ulaze u git.** Push traži Leonov izričit OK.
 10. **Jedna činjenica, jedno mjesto.** Duplikat se briše, ne sinkronizira.
+
+## Preflight
+
+`uv run python scripts/preflight.py` (ruff check, ruff format --check, mypy src, pytest bez `golden`). Mora završiti
+s `PREFLIGHT 0` prije svakog commita. Okruženje: `uv sync` (Python 3.12, pinovi u `pyproject.toml` i `uv.lock`).
 
 ## Računalo
 

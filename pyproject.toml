@@ -1,0 +1,47 @@
+[project]
+name = "clipping"
+version = "0.1.0"
+description = "Lokalni alat za plaćene clipping kampanje: dugi video → isječci 9:16 s titlovima i žigom."
+requires-python = ">=3.12,<3.13"
+license = "MIT"
+dependencies = [
+  "typer==0.27.3",
+  "pydantic==2.14.2",
+  "PyYAML==6.0.3",
+]
+
+[project.scripts]
+clipping = "clipping.cli:app"
+
+[dependency-groups]
+dev = [
+  "ruff==0.17.3",
+  "mypy==2.4.1",
+  "pytest==9.2.0",
+  "types-PyYAML",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/clipping"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".superpowers", "izlaz", "data", "docs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4"]
+ignore = ["B008"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["golden: traži zlatni video u data/izvori (preskače se ako ga nema)"]

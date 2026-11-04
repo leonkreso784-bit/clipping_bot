@@ -21,3 +21,8 @@ izlaz/
 
 # Claude Code lokalne postavke (osobna dopuštenja)
 .claude/settings.local.json
+.superpowers/
+
+# modeli i materijali kampanja (žigovi) ostaju izvan gita
+models/
+kampanje/*/
