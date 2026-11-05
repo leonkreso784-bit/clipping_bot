@@ -21,9 +21,9 @@
 ## Redoslijed na početku sesije
 
 1. `git status` i `git log --oneline -5`.
-3. Dalje po Leonu: ili kvaliteta isječaka iz nalaza pregleda (čitljivost `clean_lower`, kontekst na početku,
+2. Dalje po Leonu: ili kvaliteta isječaka iz nalaza pregleda (čitljivost `clean_lower`, kontekst na početku,
    memorija i int8 Parakeet; BACKLOG), ili plan za C4/C5 kad računi postoje i imaju tjedan ručne povijesti.
-4. Jedna cigla odjednom, dokaz prije tvrdnje, stani za OK.
+3. Jedna cigla odjednom, dokaz prije tvrdnje, stani za OK.
 
 ## Prompt za početak
 
