@@ -10,7 +10,8 @@
   `scripts/izrezi_probu.py`. Dokaz: 9 isječaka u `izlaz/proba-c2/` (izvan gita), svi QA OK, prosjek 107 s.
 - **Čeka Leona:** OK za spajanje C2; pravi žig kampanje u `kampanje/caleb-hammer/zig.png` (sad je testni
   bijeli krug); licence `tqdm`, `certifi`, `pathspec` (MPL-2.0) i `license = "MIT"` (BACKLOG „Čeka Leona").
-- Ništa nije pushano.
+- GitHub: privatni `origin` https://github.com/leonkreso784-bit/clipping_bot.git; `main` i `feature/c2` pushani
+  5. 11. Svaki novi push i dalje traži Leonov izričit OK (pravilo 9).
 
 ## Redoslijed na početku sesije
 
