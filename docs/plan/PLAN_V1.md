@@ -32,7 +32,7 @@ artbyjazi/autoclip (MIT) je uzor za kadriranje i titlove, ne ovisnost. Proba: `d
 
 | cigla | sadržaj | dokaz |
 |---|---|---|
-| C0 | repozitorij, uv, pinovi, preflight (ruff, mypy, pytest), `.env` i `data/`/`izlaz/` izvan gita | preflight 0 |
+| C0 ✅ 4. 11. | repozitorij, uv (Python 3.12), pinovi, preflight (ruff, mypy, pytest), FFmpeg omotač, sintetički testni video; `.env`, `data/`, `izlaz/`, `models/`, `kampanje/*/` izvan gita | `PREFLIGHT 0`, 6 testova prolaze, `clipping --help` ispisuje `kreni`, `odobri`, `verzija` |
 | C1 | prijepis: Parakeet kroz onnx-asr na CPU-u, VAD u dijelovima, vremena riječi; provjera licence | zlatni video (90 min) ispod 10 min; isti oblik izlaza kao proba |
 | C2 | rezanje po profilu kampanje: YAML profil, kadar po licu, ASS titlovi, žig, obvezni tekst, glasnoća; automatska provjera | 9 isječaka iz probe reproducirani s žigom; provjera pada kad žig nedostaje |
 | C3 | baza stanja (SQLite), `clipping kreni` od kraja do kraja do mape za pregled, `claude -p` izbor, nastavak nakon prekida | prekid usred posla i nastavak bez ponavljanja prijepisa |
