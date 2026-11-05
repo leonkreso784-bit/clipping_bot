@@ -4,21 +4,25 @@
 
 ## Stanje
 
-- Dizajn i plan C0 do C3 odobreni (4. 11.). C0 i C1 spojene u `main` (ADR-008: 22 min prijepisa prihvaćeno).
-- **C2 gotova na grani `feature/c2`** (zadaci 7 do 14): `profile.py`, `candidates.py`, `boundaries.py`,
-  `profanity.py`, `reframe/*`, `captions.py` (+ fontovi Anton/Inter, OFL), `export.py`, `qa.py`,
-  `scripts/izrezi_probu.py`. Dokaz: 9 isječaka u `izlaz/proba-c2/` (izvan gita), svi QA OK, prosjek 107 s.
-- **Čeka Leona:** OK za spajanje C2; pravi žig kampanje u `kampanje/caleb-hammer/zig.png` (sad je testni
-  bijeli krug); licence `tqdm`, `certifi`, `pathspec` (MPL-2.0) i `license = "MIT"` (BACKLOG „Čeka Leona").
-- GitHub: privatni `origin` https://github.com/leonkreso784-bit/clipping_bot.git; `main` i `feature/c2` pushani
-  5. 11. Svaki novi push i dalje traži Leonov izričit OK (pravilo 9).
+- C0, C1, C2 spojene u `main` i pushane (5. 11.).
+- **C3 spojena u `main` i pushana (5. 11.)**: `db.py` + `schema.sql`, `select/` (prozor, `claude -p`, upute), `ingest.py`
+  (yt-dlp, provjera kanala), `job.py` (koraci s nastavkom), `review.py` (neovisni pregled, `PREGLED.md`),
+  `approve.py` + `cli.py` (`kreni`, `odobri`). Dokaz u `docs/plan/PLAN_V1.md` (red C3), odluke u ADR-012.
+  Usput popravljen C2 kvar: `align_start` je mogao početi rez usred prve riječi (test dodan).
+  Neovisni pregled (opus) našao 9 nalaza; popravljeni: provjera kanala uvijek po metapodacima videa (handle u URL-u
+  bio je zaobilaznica), plan rezova spremljen u `radno/plan.json`, duplikati po hashu izvora i i u `odobri`,
+  ponovni rez osvježava tekst i pregled, kopiranje u `mobitel/` preko `.part`, `.cmd` bez `claude.exe` je greška.
+- Zlatni posao: `izlaz/20261105-caleb-hammer-df0e/PREGLED.md`; mapa `izlaz/mobitel/` (7 isječaka × 3 platforme).
+- **Pauza do resetiranja tjednog limita (Leon, 5. 11.).**
+- **Čeka Leona:** pravi žig u `kampanje/caleb-hammer/zig.png` (pregledač ga s pravom zove
+  "bijela točka preko lica"); licence MPL-2.0 i `license = "MIT"` (BACKLOG „Čeka Leona"); računi za `racuni:`.
+- Push na `origin` je trajno dopušten nakon `PREFLIGHT 0` (Leon, 5. 11.).
 
 ## Redoslijed na početku sesije
 
 1. `git status` i `git log --oneline -5`.
-2. Ako `feature/c2` još nije spojena: Leonov OK, spoji u `main` (bez pusha).
-3. Zatim `/brick C3` (zadaci 15 do 21 iz `docs/superpowers/plans/2026-11-04-clipping-cjevovod-c0-c3.md`:
-   baza stanja, `kreni`, izbor kroz `claude -p`, pregled, mapa za mobitel).
+3. Dalje po Leonu: ili kvaliteta isječaka iz nalaza pregleda (čitljivost `clean_lower`, kontekst na početku,
+   memorija i int8 Parakeet; BACKLOG), ili plan za C4/C5 kad računi postoje i imaju tjedan ručne povijesti.
 4. Jedna cigla odjednom, dokaz prije tvrdnje, stani za OK.
 
 ## Prompt za početak

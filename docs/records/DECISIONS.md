@@ -124,3 +124,21 @@ među kampanjama. Svaka objava nosi oznaku plaćene suradnje (platformina oznaka
 isječci koji se preklapaju više od 50 % s već objavljenima u istoj kampanji se odbijaju.
 
 **Posljedice.** Kazna za spam ili prava pogađa jedan račun, ne sve. Objave ostaju javne do isplate (pravilo Clipping.neta).
+
+## ADR-012 — Kako C3 poziva Claude Code i gdje drži stanje
+**Datum:** 2026-11-05 · **Status:** ✅ izbor graditelja (C3), Leon potvrđuje uz OK cigle
+
+**Odluka.**
+1. `claude -p` se poziva bez korisničkih postavki, dodataka i MCP-ova (`--setting-sources ""`,
+   `--strict-mcp-config`, prazan `--mcp-config`, vlastiti kratki `--system-prompt`), izravno kroz `claude.exe`
+   (ne kroz npm `.cmd` omotač). Izmjereno 5. 11.: s postavkama ~415 000 tokena konteksta po pozivu (0,42 $ za haiku),
+   bez njih ~1 500. `--bare` otpada jer ne čita prijavu. Shema ide bez ključa `$schema` (Claude Code 2.1.316 ga
+   odbija); odgovor je u `structured_output`, treba `--max-turns` ≥ 2.
+2. Zvuk, prijepis i tišine spremaju se uz izvor (`data/izvori/<id>/`) s hashem izvora u `<datoteka>.sha256`; novi
+   posao istog izvora ih ne ponavlja. Posao je vezan uz hash izvora iz trenutka nastanka.
+3. Duplikati (ADR-011): uz objavljene se gledaju i **odobreni** isječci, da dva posla istog izvora ne daju isti trenutak.
+4. Mapa za ručnu objavu je jedna za sve poslove: `izlaz/mobitel/<platforma>_<racun>/<posao>-<redni>.mp4` + `.opis.txt`.
+   Isječak koji nije prošao automatsku provjeru ne odobrava se ni bez `--izbaci`.
+
+**Posljedice.** Izbor ne nosi Leonove dodatke ni CLAUDE.md u kontekst (namjerno: uputa je samostalna). Promjena
+Claude Code sučelja (ime polja, zastavice) lomi samo `claude_runner.py`, a stvarni poziv se provjerava ručno.
