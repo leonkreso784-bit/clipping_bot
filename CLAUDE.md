@@ -34,7 +34,7 @@ Iz tog repozitorija **ne kopiramo kod** dok vlasništvo nije pisano dogovoreno (
 7. **Samo službeni API-ji za objavu.** Nikad instagrapi, tiktok-uploader ili automatizacija preglednika (ADR-006).
    TikTok i X idu ručno iz pripremljene mape (ADR-010). Jedan račun po kreatoru, oznaka plaćene suradnje uvijek (ADR-011).
 8. **Ovisnosti se pinaju točno**, samo permisivne licence (MIT, Apache-2.0, BSD); GPL/AGPL ne ulaze. Težine
-   modela i fontovi moraju dopuštati komercijalnu uporabu (CC-BY, NVIDIA Open Model License, OFL prolaze;
+   modela i fontovi moraju dopuštati komercijalnu uporabu (CC-BY, OFL prolaze;
    nekomercijalni i "research only" ne).
 9. **Tajne, izvorni mediji i izlazni videi ne ulaze u git.** Push traži Leonov izričit OK.
 10. **Jedna činjenica, jedno mjesto.** Duplikat se briše, ne sinkronizira.

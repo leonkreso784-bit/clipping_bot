@@ -77,7 +77,10 @@ objavljuje na platformi koju kampanja ne plaća. Zapis prava = kampanja + brief 
 za 90 minuta videa i koristio 1 do 4 jezgre.
 
 **Odluka.** Prijepis radi NVIDIA Parakeet TDT 0.6B v3 kroz `onnx-asr` (bez torcha), s VAD-om u dijelovima.
-Uvjet: ispod 10 minuta za zlatni video i licenca (NVIDIA Open Model License) dopušta komercijalnu uporabu.
+Uvjet: ispod 10 minuta za zlatni video i licenca dopušta komercijalnu uporabu.
+**Licenca (C1, 5. 11. 2026.):** kartica `nvidia/parakeet-tdt-0.6b-v3` i ONNX pretvorba `istupakov/parakeet-tdt-0.6b-v3-onnx`
+obje kažu CC-BY-4.0 („GOVERNING TERMS: Use of this model is governed by the CC-BY-4.0 license“, „ready for
+commercial/non-commercial use“). Prolazi pravilo 8; navođenje autora je u `THIRD_PARTY_LICENSES.md`.
 Rezerva: faster-whisper `medium` s 12 niti.
 
 **Posljedice.** Isti oblik izlaza kao u probi (riječi s vremenima). Cenzura psovki više ne dolazi besplatno iz

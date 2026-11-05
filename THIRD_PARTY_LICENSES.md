@@ -30,4 +30,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-Težine modela i fontovi dodaju se ovdje kad uđu (C1: Parakeet; C2: `face_landmarker.task`, Anton, Inter).
+## NVIDIA Parakeet TDT 0.6B v3 (CC-BY-4.0) — težine modela za prijepis (ADR-008)
+
+Model: <https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3> (NVIDIA Corporation), ONNX pretvorba
+<https://huggingface.co/istupakov/parakeet-tdt-0.6b-v3-onnx> (Ilya Stupakov), licenca CC-BY-4.0
+<https://creativecommons.org/licenses/by/4.0/>. Koristi se nepromijenjen, lokalno, za prijepis govora.
+Silero VAD kroz `istupakov/silero-vad-onnx` (MIT, Silero Team).
+
+Fontovi i `face_landmarker.task` dodaju se u C2.

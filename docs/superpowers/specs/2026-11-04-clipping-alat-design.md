@@ -52,7 +52,7 @@ kadriranje po licu, karaoke titlovi" daje kvalitetu koju Leon prihvaća. Ovaj di
 | Brief traži žig (Caleb: centriran) i ponekad obvezni tekst, zvuk ili hashtag | briefovi 4. 11. | sloj grafike po profilu; provjera prije pregleda |
 | Instagram API: 50 do 100 objava/24 h; YouTube: 100 uploada/dan, 10.000 jedinica kvote | dokumentacija | red objave s limitima po računu |
 | Oznaka plaćene suradnje uvijek | Leon | Instagram `paid partnership` oznaka gdje API dopušta; u opisu "#ad" i "Paid partnership with <kreator>" |
-| Ovisnosti pinane, samo MIT/Apache/BSD; modeli s licencom za komercijalnu uporabu | CLAUDE.md pravilo 8 | Parakeet v3 je pod NVIDIA Open Model License: cigla C1 provjerava da dopušta komercijalnu uporabu prije nego uđe |
+| Ovisnosti pinane, samo MIT/Apache/BSD; modeli s licencom za komercijalnu uporabu | CLAUDE.md pravilo 8 | Parakeet v3 je CC-BY-4.0 („ready for commercial use“), potvrđeno u C1 5. 11. 2026. |
 | Izvorni mediji i izlazi ne ulaze u git | CLAUDE.md pravilo 9 | `data/` i `izlaz/` u `.gitignore` |
 | Ništa iz BOORA repozitorija | ADR-001 | gradimo nad otvorenim alatima; autoclip (MIT) je uzor |
 
@@ -219,8 +219,8 @@ Clipping.net i prima isplate.
    za **sve** platforme, pa se prva serija objavljuje ručno s mobitela. C4 (API) se gradi tek kad računi postoje i imaju
    tjedan ručne povijesti; test C4 ide na ClubWPT profil (ima YouTube) i Caleb profil (Instagram). (izbor)
 5. **Licence.** Pravilo 8 se precizira: za kod MIT/Apache/BSD; za **težine modela i fontove** licenca mora dopuštati
-   komercijalnu uporabu, uz navođenje autora ako traži (CC-BY-4.0, NVIDIA Open Model License, OFL za fontove prolaze;
-   nekomercijalne i "research only" ne prolaze). C1 potvrđuje tekst NVIDIA licence za v3 prije nego Parakeet uđe. (izbor)
+   komercijalnu uporabu, uz navođenje autora ako traži (CC-BY-4.0, OFL za fontove prolaze;
+   nekomercijalne i "research only" ne prolaze). C1 je potvrdio: Parakeet v3 CC-BY-4.0. (izbor)
 6. **Raznolikost stilova.** `stil_titlova` je popis; C2 rotira stilove po isječku (indeks mod broj stilova). Proba je
    dala `bold_pop`; C2 dodaje bar još jedan (npr. `clean_lower`). Različite udice su posao Claudea pri izboru. (izbor)
 7. **30 minuta po poslu** je smjer, ne uvjet prolaza. Uvjeti prolaza su po cigli (C1: prijepis < 10 min; C2: < 2 min po

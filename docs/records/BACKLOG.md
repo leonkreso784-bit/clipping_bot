@@ -16,7 +16,6 @@
 
 | stavka | cigla |
 |---|---|
-| Parakeet TDT 0.6B v3: licenca (NVIDIA Open Model License) dopušta komercijalnu uporabu; onnx-asr daje vremena riječi; brzina na Leonovu CPU-u | C1 |
 | Rezerva ako Parakeet padne: faster-whisper `medium` s 12 niti (autoclip je koristio 1 do 4) | C1 |
 | MediaPipe na Pythonu 3.12 na Windowsu (proba: radi u autoclip venvu na 3.11) | C2 |
 | Instagram `paid partnership` oznaka kroz Graph API: koje polje, za koje račune | C4 |
