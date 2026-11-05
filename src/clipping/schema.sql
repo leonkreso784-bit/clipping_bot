@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS izvor (
 CREATE TABLE IF NOT EXISTS posao (
     id TEXT PRIMARY KEY,
     izvor_id INTEGER NOT NULL REFERENCES izvor(id),
+    izvor_sha256 TEXT NOT NULL,
     platforme_json TEXT NOT NULL,
     stvoreno TEXT NOT NULL,
     zavrseno TEXT

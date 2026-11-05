@@ -74,6 +74,14 @@ def test_posao_korak_resume(tmp_path: Path) -> None:
     assert db.unfinished_posao(izvor_id) is None
 
 
+def test_changed_source_hash_starts_new_posao(tmp_path: Path) -> None:
+    db = _db(tmp_path)
+    kampanja_id, izvor_id, posao = _posao(db)
+    assert db.unfinished_posao(izvor_id) == posao
+    db.get_or_create_izvor(kampanja_id, "https://youtu.be/x", "novi-hash", "brief")
+    assert db.unfinished_posao(izvor_id) is None
+
+
 def test_isjecak_status_check_rejects_unknown(tmp_path: Path) -> None:
     db = _db(tmp_path)
     _, _, posao = _posao(db)

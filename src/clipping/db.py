@@ -125,15 +125,17 @@ class Database:
     def create_posao(self, izvor_id: int, platforme: list[str]) -> str:
         with self.connect() as conn:
             row = conn.execute(
-                "SELECT k.slug FROM izvor i JOIN kampanja k ON k.id = i.kampanja_id WHERE i.id = ?",
+                "SELECT k.slug, i.sha256 FROM izvor i JOIN kampanja k ON k.id = i.kampanja_id "
+                "WHERE i.id = ?",
                 (izvor_id,),
             ).fetchone()
             if row is None:
                 raise KeyError(f"izvor {izvor_id} ne postoji")
             posao_id = f"{datetime.now():%Y%m%d}-{row['slug']}-{secrets.token_hex(2)}"
             conn.execute(
-                "INSERT INTO posao (id, izvor_id, platforme_json, stvoreno) VALUES (?, ?, ?, ?)",
-                (posao_id, izvor_id, json.dumps(platforme), _now()),
+                "INSERT INTO posao (id, izvor_id, izvor_sha256, platforme_json, stvoreno) "
+                "VALUES (?, ?, ?, ?, ?)",
+                (posao_id, izvor_id, row["sha256"], json.dumps(platforme), _now()),
             )
         return posao_id
 
@@ -147,11 +149,16 @@ class Database:
         return row
 
     def unfinished_posao(self, izvor_id: int) -> str | None:
-        """Zadnji nedovršeni posao za izvor (za nastavak nakon prekida)."""
+        """Zadnji nedovršeni posao za izvor (za nastavak nakon prekida).
+
+        Posao je vezan uz hash izvora iz trenutka nastanka; ako se sadržaj izvora promijenio,
+        njegovi indeksi riječi više ne vrijede i nastavka nema.
+        """
         with self.connect() as conn:
             row = conn.execute(
-                "SELECT id FROM posao WHERE izvor_id = ? AND zavrseno IS NULL "
-                "ORDER BY stvoreno DESC, rowid DESC LIMIT 1",
+                "SELECT p.id FROM posao p JOIN izvor i ON i.id = p.izvor_id "
+                "WHERE p.izvor_id = ? AND p.zavrseno IS NULL AND p.izvor_sha256 = i.sha256 "
+                "ORDER BY p.stvoreno DESC, p.rowid DESC LIMIT 1",
                 (izvor_id,),
             ).fetchone()
         return None if row is None else str(row["id"])
