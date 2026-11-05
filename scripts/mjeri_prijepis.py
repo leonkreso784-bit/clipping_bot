@@ -36,12 +36,18 @@ def agreement(ours: Transcript, reference: Transcript, *, window_s: float) -> fl
 
 def transcribe_whisper_medium(audio: Path, *, threads: int) -> Transcript:
     """Rezerva iz ADR-008: faster-whisper medium (int8) na CPU-u. Nije ovisnost projekta."""
+    import wave  # noqa: PLC0415
+
+    import numpy as np  # noqa: PLC0415
     from faster_whisper import WhisperModel  # noqa: PLC0415
 
+    # WAV se čita ovdje (16 kHz mono PCM16 iz audio.extract_audio); PyAV preskačemo.
+    with wave.open(str(audio)) as wav:
+        assert wav.getframerate() == 16000 and wav.getnchannels() == 1 and wav.getsampwidth() == 2
+        samples = np.frombuffer(wav.readframes(wav.getnframes()), dtype=np.int16)
+    pcm = samples.astype(np.float32) / 32768.0
     model = WhisperModel("medium", device="cpu", compute_type="int8", cpu_threads=threads)
-    segments, _info = model.transcribe(
-        str(audio), language="en", word_timestamps=True, vad_filter=True
-    )
+    segments, _info = model.transcribe(pcm, language="en", word_timestamps=True, vad_filter=True)
     words = [Word(w.word.strip(), w.start, w.end) for seg in segments for w in seg.words or []]
     return Transcript(words=words, language="en", model="faster-whisper-medium-int8")
 

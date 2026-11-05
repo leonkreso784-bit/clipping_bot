@@ -1,26 +1,24 @@
 # Predaja za sljedeću sesiju
 
-**Napisano:** 2026-11-04 (navečer). Kad se sesija odradi, sadržaj se zamjenjuje novom predajom.
+**Napisano:** 2026-11-05. Kad se sesija odradi, sadržaj se zamjenjuje novom predajom.
 
 ## Stanje
 
-- Smjer projekta promijenjen: **plaćene clipping kampanje za druge kreatore** (Clipping.net), engleski, globalno.
-  Vlastiti kanal i GTA 6 su parkirani (ADR-007).
-- Odrađena proba s autoclipom na Caleb Hammer videu: `docs/istrazivanje/PROBA_AUTOCLIP.md`. Isječci u
-  `izlaz/proba-2026-11-04-caleb-hammer/` (izvan gita). Leon: trenuci u redu, titlovi odlični, skakanje kadra ne smeta.
-- Dizajn napisan: `docs/superpowers/specs/2026-11-04-clipping-alat-design.md`. Prošao neovisni pregled graditelja.
-  **Leon odobrio 4. 11. 2026.** Psovke: zvjezdice u titlovima, zvuk netaknut.
-- Plan izvedbe C0 do C3 odobren: `docs/superpowers/plans/2026-11-04-clipping-cjevovod-c0-c3.md`.
-- **C0 gotova** na grani `feature/c0` (kostur paketa, preflight, ffmpeg omotač). Čeka Leonov OK za spajanje u `main` i početak C1.
-- Scratchpad probe (autoclip venv, izvorni video, audio.wav, Whisperov transcript.json) ostaje: C1 ga kopira u `data/izvori/JvLklMRThYs/`.
+- Dizajn i plan C0 do C3 odobreni (4. 11.). C0 spojena u `main` (91a2b63).
+- **C1 gotova na grani `feature/c1`**: `transcript.py`, `audio.py`, `asr.py` (Parakeet kroz onnx-asr), skripta
+  `scripts/mjeri_prijepis.py`, zlatni video u `data/izvori/JvLklMRThYs/` (izvan gita). Pregled opusom odrađen,
+  dva popravka ugrađena (token razmaka otvara riječ, zajednički kursor vremena).
+- **Čeka Leona:** ADR-008 — Parakeet treba 22 min za 90 min videa (cilj je bio 10), rezerva Whisper medium 2 sata.
+  Licenca CC-BY-4.0 prolazi. Odluka: prihvatiti 22 min ili tražiti ubrzanje (BACKLOG). Plus licence `tqdm` i
+  `pathspec` (MPL-2.0) i `license = "MIT"` u pyproject (BACKLOG „Čeka Leona").
+- Ništa nije pushano.
 
 ## Redoslijed na početku sesije
 
 1. `git status` i `git log --oneline -5`.
-2. Pročitaj dizajn i `docs/records/BACKLOG.md` (odjeljak „Čeka Leona").
-3. Ako je `feature/c0` još nespojena: pitaj Leona za OK, spoji u `main` (bez pusha).
-4. Zatim `/brick C1` (zadaci 3 do 6 iz plana; prvo kopirati probu u `data/izvori/JvLklMRThYs/`).
-5. Jedna cigla odjednom, dokaz prije tvrdnje, stani za OK.
+2. Ako `feature/c1` još nije spojena: Leonov OK na ADR-008, spoji u `main` (bez pusha).
+3. Zatim `/brick C2` (zadaci 7 do 14 iz `docs/superpowers/plans/2026-11-04-clipping-cjevovod-c0-c3.md`).
+4. Jedna cigla odjednom, dokaz prije tvrdnje, stani za OK.
 
 ## Prompt za početak
 
