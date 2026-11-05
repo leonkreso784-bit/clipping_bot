@@ -70,3 +70,24 @@ def test_golden_clip_tracks_a_face() -> None:
     for s in path.segments:
         for k in s.keyframes:
             assert 0 <= k.x <= path.source_width - s.width + 1e-6
+
+
+def test_single_wide_face_uses_fit() -> None:
+    from clipping.reframe import track_segment
+
+    big = [
+        FaceObservation(
+            t=t * 0.2, cx=640.0, cy=360.0, width=500.0, height=600.0, eye_y=300.0, mar=0.1
+        )
+        for t in range(10)
+    ]
+    seg = track_segment(
+        FaceTrack(0, big),
+        start_s=0.0,
+        end_s=2.0,
+        source_w=1280,
+        source_h=720,
+        crop_w=404,
+        crop_h=720,
+    )
+    assert seg.fit is True

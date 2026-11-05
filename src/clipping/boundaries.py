@@ -70,11 +70,16 @@ def refine(
         return None
     end_word = clamped
 
-    start_s, end_s = transcript.time_range(start_word, end_word)
-    start_s = align_start(start_s, silences)
-    end_s = align_end(end_s, silences)
-    if end_s - start_s > max_duration_s:  # poravnanje samo širi, pa strop provjeri opet
-        end_s = start_s + max_duration_s
+    first_word_start, last_word_end = transcript.time_range(start_word, end_word)
+    start_s = align_start(first_word_start, silences)
+    end_s = align_end(last_word_end, silences)
+    # Poravnanje samo širi. Preko stropa prvo skrati vodeću tišinu (nikad preko prve riječi),
+    # pa tek onda rep iza zadnje riječi; zadnja riječ ostaje cijela jer _clamp_duration to jamči.
+    over = end_s - start_s - max_duration_s
+    if over > 0:
+        start_s = min(start_s + over, first_word_start)
+    if end_s - start_s > max_duration_s:
+        end_s = max(start_s + max_duration_s, last_word_end)
     return Boundary(max(0.0, start_s), end_s, start_word, end_word)
 
 

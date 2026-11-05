@@ -52,7 +52,7 @@ def test_filtergraph_contains_overlay_and_ass(synthetic_video: Path, tmp_path: P
     graph = build_filtergraph(
         req, subtitle_name="captions.ass", fonts_name="fonts", watermark_input_index=1
     )
-    assert "[1:v]format=rgba,colorchannelmixer=aa=0.85" in graph
+    assert "[1:v]scale=64:64,format=rgba,colorchannelmixer=aa=0.85" in graph
     assert "overlay=(W-w)/2:(H-h)/2" in graph
     assert graph.index("overlay=") < graph.index("ass=filename=captions.ass:fontsdir=fonts")
     assert graph.endswith("[vout]")
@@ -84,3 +84,13 @@ def test_export_without_watermark_has_no_overlay(synthetic_video: Path, tmp_path
     req = _request(synthetic_video, tmp_path, watermark=None)
     out = export_clip(req, work_dir=tmp_path / "radno")
     assert out.is_file() and out.stat().st_size > 0
+
+
+def test_filtergraph_scales_large_watermark(synthetic_video: Path, tmp_path: Path) -> None:
+    big = tmp_path / "veliki.png"
+    ffmpeg.run(["-f", "lavfi", "-i", "color=c=white:s=1500x1500", "-frames:v", "1", str(big)])
+    req = _request(synthetic_video, tmp_path, watermark=Watermark(datoteka=big, polozaj="centar"))
+    graph = build_filtergraph(
+        req, subtitle_name="captions.ass", fonts_name="fonts", watermark_input_index=1
+    )
+    assert "scale=324:324" in graph.split("overlay")[0]

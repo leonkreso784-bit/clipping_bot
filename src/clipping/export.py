@@ -123,7 +123,12 @@ def build_filtergraph(
     if request.watermark is not None and watermark_input_index is not None:
         opacity = request.watermark.neprozirnost
         pos = watermark_position(request.watermark.polozaj)
-        parts.append(f"[{watermark_input_index}:v]format=rgba,colorchannelmixer=aa={opacity:g}[wm]")
+        info = ffmpeg.probe(request.watermark.path)
+        wm_w, wm_h = watermark_render_size(info.width, info.height, out_w)
+        parts.append(
+            f"[{watermark_input_index}:v]scale={wm_w}:{wm_h},format=rgba,"
+            f"colorchannelmixer=aa={opacity:g}[wm]"
+        )
         parts.append(f"{current}[wm]overlay={pos}:format=auto[vwm]")
         current = "[vwm]"
 

@@ -72,3 +72,29 @@ def test_qa_fails_when_caption_shifted(exports: dict[str, Path], tmp_path: Path)
     subs.save(str(shifted), encoding="utf-8")
     report = check_clip(exports["sa_zigom"], expected=_expect(exports, watermark=True, ass=shifted))
     assert not report.ok and any("titl" in n for n in report.nalazi)
+
+
+def test_qa_finds_dark_watermark(synthetic_video: Path, tmp_path: Path) -> None:
+    # Crni krug na prozirnom: korelacija svjetline s alfom je negativna, QA gleda |r|.
+    wm = Watermark(datoteka=Path("tests/fixtures/zig_tamni_test.png"), polozaj="dolje_desno")
+    req = ExportRequest(
+        source=synthetic_video,
+        destination=tmp_path / "tamni.mp4",
+        start_s=START_S,
+        end_s=3.0,
+        crop_path=centre_crop(1280, 720, 2.0),
+        words=WORDS,
+        style=PRESETS["bold_pop"],
+        watermark=wm,
+    )
+    out = export_clip(req, work_dir=tmp_path / "radno")
+    expectation = ClipExpectation(
+        min_s=1.0,
+        max_s=3.0,
+        watermark=wm,
+        ass_path=tmp_path / "radno" / "tamni" / "captions.ass",
+        words=WORDS,
+        start_s=START_S,
+    )
+    report = check_clip(out, expected=expectation)
+    assert report.ok, report.nalazi

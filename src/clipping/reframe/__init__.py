@@ -38,6 +38,7 @@ __all__ = [
     "Strategy",
     "build_crop_path",
     "segment_crop_filter",
+    "track_segment",
     "wide_segment",
 ]
 
@@ -125,8 +126,15 @@ def _segments_for_shot(
         visible = [t for t in tracks if t.observations_between(a.start_s, a.end_s)]
         if a.track is not None:
             segments.append(
-                _track_segment(
-                    a.track, a.start_s, a.end_s, source_w, source_h, crop_w, crop_h, config
+                track_segment(
+                    a.track,
+                    start_s=a.start_s,
+                    end_s=a.end_s,
+                    source_w=source_w,
+                    source_h=source_h,
+                    crop_w=crop_w,
+                    crop_h=crop_h,
+                    config=config,
                 )
             )
         elif visible:
@@ -148,20 +156,25 @@ def _segments_for_shot(
     return segments
 
 
-def _track_segment(
+def track_segment(
     track: FaceTrack,
+    *,
     start_s: float,
     end_s: float,
     source_w: int,
     source_h: int,
     crop_w: int,
     crop_h: int,
-    config: ReframeConfig,
+    config: ReframeConfig | None = None,
 ) -> CropSegment:
-    """Jedan subjekt: prati ga, ili zaključaj kadar ako se jedva miče ili je krupni plan."""
+    """Jedan subjekt: prati ga, zaključaj kadar ako se jedva miče, `fit` ako je širi od kadra."""
+    config = config or ReframeConfig()
     observations = track.observations_between(start_s, end_s)
     if not observations:
         return _general_segment(start_s, end_s, source_w, source_h, crop_w, crop_h)
+    mean_face_width = sum(o.width for o in observations) / len(observations)
+    if mean_face_width > crop_w * FIT_IF_SPREAD_EXCEEDS:
+        return _fit_segment(start_s, end_s, source_w, source_h)
     raw = [
         (
             o.t,
@@ -171,7 +184,6 @@ def _track_segment(
         for o in observations
     ]
     smoothing = config.smoothing or SmoothingConfig()
-    mean_face_width = sum(o.width for o in observations) / len(observations)
     spread_x = max(x for _, x, _ in raw) - min(x for _, x, _ in raw)
     should_lock = (
         mean_face_width > crop_w * LOCK_IF_FACE_WIDER_THAN or spread_x < smoothing.dead_zone_px
@@ -210,15 +222,7 @@ def wide_segment(
     left = min(o.left for o in observations)
     right = max(o.right for o in observations)
     if right - left > crop_w * FIT_IF_SPREAD_EXCEEDS:
-        return CropSegment(
-            start_s,
-            end_s,
-            source_w,
-            source_h,
-            [CropKeyframe(start_s, 0.0, 0.0)],
-            Strategy.WIDE,
-            fit=True,
-        )
+        return _fit_segment(start_s, end_s, source_w, source_h)
     centre_x = (left + right) / 2
     eye_y = sum(o.eye_y for o in observations) / len(observations)
     keyframe = CropKeyframe(
@@ -227,6 +231,19 @@ def wide_segment(
         _clamp(eye_y - EYE_LINE_RATIO * crop_h, 0, source_h - crop_h),
     )
     return CropSegment(start_s, end_s, crop_w, crop_h, [keyframe], Strategy.WIDE)
+
+
+def _fit_segment(start_s: float, end_s: float, source_w: int, source_h: int) -> CropSegment:
+    """Cijeli izvorni kadar na zamućenoj pozadini: lice ili lica šira nego što rez može držati."""
+    return CropSegment(
+        start_s,
+        end_s,
+        source_w,
+        source_h,
+        [CropKeyframe(start_s, 0.0, 0.0)],
+        Strategy.WIDE,
+        fit=True,
+    )
 
 
 def _general_segment(

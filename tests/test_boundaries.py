@@ -48,3 +48,13 @@ def test_refine_fallback_padding_without_silence() -> None:
 
 def test_refine_empty_transcript() -> None:
     assert refine(Transcript(), 0, 5, silences=[], min_duration_s=1, max_duration_s=5) is None
+
+
+def test_refine_cap_never_cuts_last_word() -> None:
+    # 10.0 → 99.95 je 89,95 s; tišina ispred povlači početak, strop 90 s ne smije odrezati kraj.
+    words = [Word(f"w{i}", 10.0 + i, 10.0 + i + 0.95) for i in range(90)]
+    words[-1] = Word("kraj.", 99.0, 99.95)
+    t = Transcript(words)
+    b = refine(t, 0, 89, silences=[Silence(8.0, 9.4)], min_duration_s=20, max_duration_s=90)
+    assert b is not None
+    assert b.end_s >= 99.95 and b.end_s - b.start_s <= 90 + 1e-6

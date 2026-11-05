@@ -169,7 +169,9 @@ def watermark_score(path: Path, watermark: Watermark, *, at_s: float) -> float:
     alpha = np.frombuffer(rgba, dtype=np.uint8)[3::4].astype(np.float64)
     if luma.size != alpha.size or alpha.std() == 0 or luma.std() == 0:
         return 0.0
-    return float(np.corrcoef(luma, alpha)[0, 1])
+    # Svijetli žig na tamnoj pozadini daje r blizu 1, tamni na svijetloj blizu -1; oboje znači
+    # da je oblik žiga u kadru. Žig iste svjetline kao pozadina ostaje neprepoznat.
+    return abs(float(np.corrcoef(luma, alpha)[0, 1]))
 
 
 def check_captions(ass_path: Path, words: list[Word], start_s: float) -> list[str]:
