@@ -23,6 +23,10 @@
 | Psovke maskiraju i „cocky“, „booby“, „titter“ (korijen + nastavak): popis iznimaka | pregled C2, `profanity.py` |
 | `opencv-python` (kroz scenedetect) i `opencv-contrib-python` oba instalirani; `[tool.uv]` override da contrib pokrije oba | pregled C2, `pyproject.toml` |
 | `models_dl` skida model bez timeouta; rotacija mobitelskih izvora se ne čita (`probe`), kadar bi bio krivo orijentiran; QA čita ASS a ne spaljeni video | pregled C2 |
+| Memorija: s otvorenim VS Codeom, Dockerom/WSL-om i više Claude sesija RAM je pun (0,45 GB slobodno, 7 200 stranica/s) i prijepis ide 2 do 4× sporije; Parakeet drži 3,5 GB. Probati int8 inačicu modela (manje memorije) ili zatvarati alate prije `kreni` | dokaz C3, ADR-012 |
+| Neovisni pregled (dokaz C3, ocjene 52–68): `clean_lower` je tanak i slabo čitljiv; isječci počinju bez konteksta (udica ne objašnjava tko govori); pregledač ne zna da je žig testni krug | `captions.py`, `select/prompt.md` |
+| Opis za X: predložak + udica može prijeći 280 znakova; nema provjere duljine po platformi | `approve.py` |
+| Isječci zlatnog posla `20261105-caleb-hammer-df0e` su u bazi `odobren`; novi posao istog videa odbit će te trenutke kao duplikate (namjerno, ADR-012) | `data/clipping.db` |
 
 | stavka | cigla |
 |---|---|
@@ -30,7 +34,6 @@
 | MediaPipe na Pythonu 3.12 na Windowsu (proba: radi u autoclip venvu na 3.11) | C2 |
 | Instagram `paid partnership` oznaka kroz Graph API: koje polje, za koje račune | C4 |
 | YouTube upload neprovjerenog projekta: ostaje li javan | C4 |
-| yt-dlp za YouTube poveznice iz briefa: treba li JavaScript runtime i PO token (proba: radilo bez) | C3 |
 | Clipping.net: ima li API za clippere (pitati podršku) | C5 |
 
 ## Parkirano
