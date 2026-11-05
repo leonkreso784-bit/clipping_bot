@@ -32,21 +32,29 @@ class SegmentTokens:
 
 
 def tokens_to_words(segments: list[SegmentTokens]) -> list[Word]:
-    """Token koji počinje razmakom otvara novu riječ; kraj riječi je početak sljedeće."""
+    """Token koji počinje razmakom otvara novu riječ; kraj riječi je početak sljedeće.
+
+    Token od samog razmaka (brojevi i "$" nemaju oblik s razmakom) također otvara riječ.
+    Kursor je zajednički za sve segmente: VAD-ovi dijelovi se preklapaju 0,2 s, pa riječ
+    iz sljedećeg dijela ne smije početi prije kraja prethodne.
+    """
     words: list[Word] = []
+    cursor = 0.0
     for seg in segments:
         groups: list[tuple[str, float]] = []  # (tekst, relativni start)
+        new_word = True
         for token, ts in zip(seg.tokens, seg.timestamps, strict=True):
             piece = token.strip()
             if not piece:
+                new_word = new_word or token != ""
                 continue
-            if token.startswith(" ") or not groups:
+            if token.startswith(" ") or new_word:
                 groups.append((piece, ts))
             else:
                 text, start = groups[-1]
                 groups[-1] = (text + piece, start)
+            new_word = False
 
-        cursor = seg.start
         for i, (text, rel_start) in enumerate(groups):
             start = max(cursor, seg.start + rel_start)
             if i + 1 < len(groups):

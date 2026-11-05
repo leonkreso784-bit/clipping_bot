@@ -52,3 +52,22 @@ def test_transcribe_30s_of_golden(tmp_path: Path) -> None:
     assert all(w.end >= w.start for w in t.words)
     assert t.words[-1].end <= 30.5
     assert t.model == "parakeet-tdt-0.6b-v3"
+
+
+def test_whitespace_token_opens_new_word() -> None:
+    # Brojevi i "$" nemaju oblik s razmakom; razmak dolazi kao zaseban token "▁".
+    seg = SegmentTokens(
+        0.0, 2.0, [" in", " ", "2", "0", " ", "$", "5"], [0.0, 0.3, 0.4, 0.5, 0.8, 0.9, 1.0]
+    )
+    assert [w.text for w in tokens_to_words([seg])] == ["in", "20", "$5"]
+
+
+def test_overlapping_segments_keep_times_monotonic() -> None:
+    # VAD siječe dugi govor na dijelove od ~29,8 s koji se preklapaju 0,2 s.
+    a = SegmentTokens(0.0, 30.0, [" a", " b"], [0.0, 29.85])
+    b = SegmentTokens(29.8, 59.8, [" c"], [0.0])
+    words = tokens_to_words([a, b])
+    assert [w.text for w in words] == ["a", "b", "c"]
+    for prev, nxt in zip(words, words[1:], strict=False):
+        assert prev.end <= nxt.start
+    assert words[2].start >= words[1].end

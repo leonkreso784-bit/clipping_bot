@@ -37,4 +37,10 @@ Model: <https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3> (NVIDIA Corporation)
 <https://creativecommons.org/licenses/by/4.0/>. Koristi se nepromijenjen, lokalno, za prijepis govora.
 Silero VAD kroz `istupakov/silero-vad-onnx` (MIT, Silero Team).
 
+## tqdm 4.70.1 (MPL-2.0 AND MIT) — posredna ovisnost huggingface-huba
+
+Dolazi kroz `huggingface-hub` samo za traku napretka pri skidanju modela; ne mijenja se i ne uključuje
+u naš kod. MPL-2.0 nije na popisu u pravilu 8 (MIT, Apache-2.0, BSD): **Leon odlučuje** ostaje li
+(zapis u `docs/records/BACKLOG.md`, „Čeka Leona").
+
 Fontovi i `face_landmarker.task` dodaju se u C2.
