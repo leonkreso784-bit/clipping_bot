@@ -62,4 +62,7 @@ LLM sloj, baza i web sučelje nisu preuzeti.
 certifikata za HTTPS. Ne mijenjaju se i ne uključuju u naš kod. MPL-2.0 nije na popisu u pravilu 8
 (MIT, Apache-2.0, BSD): **Leon odlučuje** ostaju li (zapis u `docs/records/BACKLOG.md`, „Čeka Leona").
 
-Fontovi i `face_landmarker.task` dodaju se u C2.
+## yt-dlp 2026.10.26 (Unlicense) — ulaz iz kampanje (C3)
+
+Javna domena. Poziva se kao zaseban proces (`python -m yt_dlp`) samo za poveznice s kanala iz briefa
+(ADR-004); kod se ne mijenja ni ne uključuje.
