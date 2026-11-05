@@ -33,7 +33,7 @@ artbyjazi/autoclip (MIT) je uzor za kadriranje i titlove, ne ovisnost. Proba: `d
 | cigla | sadržaj | dokaz |
 |---|---|---|
 | C0 ✅ 4. 11. | repozitorij, uv (Python 3.12), pinovi, preflight (ruff, mypy, pytest), FFmpeg omotač, sintetički testni video; `.env`, `data/`, `izlaz/`, `models/`, `kampanje/*/` izvan gita | `PREFLIGHT 0`, 6 testova prolaze, `clipping --help` ispisuje `kreni`, `odobri`, `verzija` |
-| C1 ⚠️ 5. 11. | prijepis: Parakeet kroz onnx-asr na CPU-u, VAD u dijelovima, vremena riječi; provjera licence | cilj: zlatni video (90 min) ispod 10 min. Izmjereno: Parakeet 1322 s (22 min), podudaranje 0.908; rezerva faster-whisper medium 7197 s. Licenca CC-BY-4.0 ✅. `PREFLIGHT 0`, 22 testa + zlatni dimni test. Vrijeme čeka Leonovu odluku (ADR-008) |
+| C1 ✅ 5. 11. | prijepis: Parakeet kroz onnx-asr na CPU-u, VAD u dijelovima, vremena riječi; provjera licence | cilj: zlatni video (90 min) ispod 10 min. Izmjereno: Parakeet 1322 s (22 min), podudaranje 0.908; rezerva faster-whisper medium 7197 s. Licenca CC-BY-4.0 ✅. `PREFLIGHT 0`, 22 testa + zlatni dimni test. Leon prihvatio 22 min (ADR-008) |
 | C2 | rezanje po profilu kampanje: YAML profil, kadar po licu, ASS titlovi, žig, obvezni tekst, glasnoća; automatska provjera | 9 isječaka iz probe reproducirani s žigom; provjera pada kad žig nedostaje |
 | C3 | baza stanja (SQLite), `clipping kreni` od kraja do kraja do mape za pregled, `claude -p` izbor, nastavak nakon prekida | prekid usred posla i nastavak bez ponavljanja prijepisa |
 | C4 | objava: Instagram Graph API i YouTube Data API iz reda s limitima; mapa za TikTok/X; oznaka plaćene suradnje | testna objava na Leonov račun; duplikat se odbija |

@@ -71,7 +71,7 @@ parkirani (BACKLOG).
 objavljuje na platformi koju kampanja ne plaća. Zapis prava = kampanja + brief + datum (ADR-004).
 
 ## ADR-008 — Prijepis: Parakeet TDT na CPU-u umjesto Whispera
-**Datum:** 2026-11-04 · **Status:** ⚠️ izmjereno u C1 5. 11. 2026.: licenca prolazi, vrijeme ne (22 min umjesto 10); Leon odlučuje je li 22 min prihvatljivo
+**Datum:** 2026-11-04 · **Status:** ✅ Leon 5. 11. 2026. (C1: licenca prolazi; 22 min po videu od 90 min prihvaćeno umjesto cilja 10; ubrzanje u BACKLOG-u)
 
 **Kontekst.** Proba: faster-whisper `large-v3-turbo` na Leonovu CPU-u (12 jezgri, bez grafičke) trajao je 103 minute
 za 90 minuta videa i koristio 1 do 4 jezgre.

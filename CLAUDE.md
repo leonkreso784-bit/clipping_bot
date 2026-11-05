@@ -17,7 +17,7 @@ Iz tog repozitorija **ne kopiramo kod** dok vlasništvo nije pisano dogovoreno (
 
 ## Stanje
 
-**C0 spojena u `main`; C1 gotova na grani `feature/c1`** (čeka Leonov OK: 22 min prijepisa umjesto 10, ADR-008). Dizajn `docs/superpowers/specs/2026-11-04-clipping-alat-design.md` je odobren (4. 11. 2026.); plan cigli
+**C0 i C1 spojene u `main`; cigla C2 u tijeku** (grana `feature/c2`, zadaci 7 do 14). Dizajn `docs/superpowers/specs/2026-11-04-clipping-alat-design.md` je odobren (4. 11. 2026.); plan cigli
 `docs/plan/PLAN_V1.md` i `docs/superpowers/plans/` se razrađuju iz njega. Proba s autoclipom: `docs/istrazivanje/PROBA_AUTOCLIP.md`.
 **Svaku sesiju počni od `docs/records/SLJEDECA_SESIJA.md`.**
 
