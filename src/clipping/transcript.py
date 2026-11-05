@@ -66,6 +66,13 @@ class Transcript:
     def text_between(self, first_word: int, last_word: int) -> str:
         return " ".join(w.text.strip() for w in self.slice(first_word, last_word)).strip()
 
+    def indices_in_range(self, start_s: float, end_s: float) -> tuple[int, int] | None:
+        """Indeksi prve i zadnje riječi koje cijele leže u `[start_s, end_s]`, ili `None`."""
+        inside = [i for i, w in enumerate(self.words) if w.start >= start_s and w.end <= end_s]
+        if not inside:
+            return None
+        return inside[0], inside[-1]
+
     def sentence_end_indices(self) -> list[int]:
         return [i for i, w in enumerate(self.words) if w.ends_sentence]
 

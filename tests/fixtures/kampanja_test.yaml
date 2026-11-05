@@ -1,0 +1,33 @@
+slug: test
+kreator: Testni Kreator
+platforma_kampanje: clipping.net
+url_kampanje: https://clipping.net/test
+cijena_po_100k_usd: 75
+prag_kvalifikacije_pregleda: 50000
+platforme: [tiktok, instagram]
+racuni:
+  tiktok: "@test"
+izvori:
+  dopusteni_kanali: ["https://www.youtube.com/@test"]
+  zapis_prava: "testni brief"
+isjecak:
+  trajanje_s: {min: 20, max: 90}
+  jezik: en
+grafika:
+  zig: {datoteka: tests/fixtures/zig_test.png, polozaj: centar, neprozirnost: 0.85}
+  obvezni_tekst: null
+  obvezni_zvuk: null
+  hashtagovi: ["#test", "#ad"]
+opis:
+  oznaka_placene_suradnje: true
+  predlozak: "{udica}
+
+Paid partnership with Testni Kreator. Full episode: {url_izvora}
+{hashtagovi}"
+pravila_sadrzaja:
+  zabranjeno: ["ismijavanje gosta"]
+  stil_titlova: [bold_pop, clean_lower]
+  psovke: {titlovi: zvjezdice, zvuk: nista}
+raspored:
+  objava_dnevno_po_racunu: 2
+  zagrijavanje_dana: 7
