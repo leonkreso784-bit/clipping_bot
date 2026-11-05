@@ -12,7 +12,7 @@ import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from clipping.db import Database
+from clipping.db import Database, find_duplicate
 from clipping.profile import CampaignProfile, load_profile
 
 #: Statusi koje `odobri` smije mijenjati; zakazani i objavljeni isječci su izvan njegova dosega.
@@ -29,6 +29,7 @@ class ApproveResult:
     odobreni: list[int] = field(default_factory=list)
     izbaceni: list[int] = field(default_factory=list)
     pali_qa: list[int] = field(default_factory=list)
+    duplikati: list[int] = field(default_factory=list)
     datoteke: list[Path] = field(default_factory=list)
     upozorenja: list[str] = field(default_factory=list)
 
@@ -109,13 +110,32 @@ def approve(
         targets = [
             mobile_dir(root, profile, p)[0] / f"{posao_id}-{redni:02d}.mp4" for p in platforms
         ]
-        if redni in izbaci or row["qa_ok"] != 1:
+        # Duplikat se gleda i ovdje, ne samo pri rezanju: dva posla istog izvora mogu izrezati isti
+        # trenutak prije nego što je ijedan odobren (pregled C3).
+        clash = find_duplicate(
+            db.published_ranges(int(izvor["kampanja_id"])),
+            str(posao["izvor_sha256"]),
+            float(row["start_s"]),
+            float(row["end_s"]),
+            exclude_posao=posao_id,
+        )
+        if redni in izbaci or row["qa_ok"] != 1 or clash is not None:
             if redni in izbaci:
                 result.izbaceni.append(redni)
                 db.set_isjecak_status(int(row["id"]), "izbacen")
-            else:
+            elif row["qa_ok"] != 1:
                 result.pali_qa.append(redni)
                 db.set_isjecak_status(int(row["id"]), "izrezan")
+            else:
+                assert clash is not None
+                result.duplikati.append(redni)
+                result.upozorenja.append(
+                    f"isječak {redni} je duplikat isječka iz posla {clash.posao_id} "
+                    f"({clash.start_s:.0f}–{clash.end_s:.0f} s); nije odobren"
+                )
+                db.set_isjecak_status(
+                    int(row["id"]), "provjeren" if row["qa_ok"] == 1 else "izrezan"
+                )
             for target in targets:
                 target.unlink(missing_ok=True)
                 target.with_suffix(".opis.txt").unlink(missing_ok=True)
@@ -133,7 +153,10 @@ def approve(
         )
         for target in targets:
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source, target)
+            # Preko `.part`: prekid usred kopiranja ne smije ostaviti pola videa u mapi.
+            partial = target.with_name(target.stem + ".part")
+            shutil.copyfile(source, partial)
+            partial.replace(target)
             target.with_suffix(".opis.txt").write_text(opis, encoding="utf-8")
             result.datoteke.append(target)
         db.set_isjecak_status(int(row["id"]), "odobren")

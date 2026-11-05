@@ -26,10 +26,24 @@ def test_normalize_channel() -> None:
     assert normalize_channel("http://youtube.com/@Test/videos/") == "https://www.youtube.com/@test"
 
 
-def test_allowed_source_by_handle(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_foreign_handle_rejected_without_network(monkeypatch: pytest.MonkeyPatch) -> None:
     calls = _fake(monkeypatch, {})
-    assert is_allowed_source("https://www.youtube.com/@Test/videos", PROFILE)
-    assert calls == []  # handle u URL-u odlučuje bez mreže
+    assert not is_allowed_source("https://www.youtube.com/@drugi/videos", PROFILE)
+    assert calls == []  # tuđi handle se odbija bez mreže
+
+
+def test_allowed_handle_still_checks_video_channel(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Pregled C3: yt-dlp prihvaća `/@dopusten#/watch?v=TUDJI`; handle u URL-u nije dokaz."""
+    _fake(monkeypatch, {"id": "TUDJI", "uploader_url": "https://www.youtube.com/@drugi"})
+    assert not is_allowed_source("https://www.youtube.com/@test#/watch?v=TUDJI", PROFILE)
+
+
+def test_rejects_lookalike_host_and_missing_scheme(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls = _fake(monkeypatch, {"id": "abc", "uploader_url": OWN})
+    assert not is_allowed_source("https://notyoutube.com/watch?v=abc", PROFILE)
+    assert not is_allowed_source("evil.com/@test", PROFILE)
+    assert not is_allowed_source("www.youtube.com/watch?v=abc", PROFILE)
+    assert calls == []
 
 
 def test_allowed_source_by_metadata(monkeypatch: pytest.MonkeyPatch) -> None:

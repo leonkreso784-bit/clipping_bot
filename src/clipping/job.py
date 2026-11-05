@@ -12,7 +12,7 @@ import json
 import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -21,7 +21,7 @@ from clipping import audio as audio_module
 from clipping.boundaries import Boundary, refine
 from clipping.candidates import Candidate
 from clipping.captions import PRESETS
-from clipping.db import Database
+from clipping.db import MAX_DUPLICATE_OVERLAP, Database, find_duplicate
 from clipping.export import ExportRequest
 from clipping.ingest import Downloaded, sha256_file
 from clipping.profile import CampaignProfile
@@ -32,8 +32,6 @@ from clipping.select.window import write_window
 from clipping.transcript import Transcript
 
 STEPS = ("ulaz", "zvuk", "prijepis", "tisine", "prozor", "izbor", "rezanje", "provjera", "pregled")
-#: Novi isječak koji se s odobrenim ili objavljenim preklapa više od ovoga se odbija (§11a.8).
-MAX_PUBLISHED_OVERLAP = 0.5
 #: Provjera trajanja dopušta ovoliko izvan profila (rez se slaže na kraj riječi i tišinu).
 QA_DURATION_SLACK_S = 1.0
 
@@ -138,13 +136,6 @@ def cache_valid(path: Path, sha256: str) -> bool:
 
 def cache_mark(path: Path, sha256: str) -> None:
     _sidecar(path).write_text(sha256)
-
-
-def _overlap(a_start: float, a_end: float, b_start: float, b_end: float) -> float:
-    shared = min(a_end, b_end) - max(a_start, b_start)
-    if shared <= 0:
-        return 0.0
-    return shared / max(1e-6, min(a_end - a_start, b_end - b_start))
 
 
 def run_job(
@@ -259,10 +250,17 @@ def run_job(
             log(f"izbor: {len(candidates)} kandidata")
 
     # --- 7. rezanje (po isječku; gotovi se ne režu ponovno) ----------------------------------
-    odbijeni: list[str] = []
-    planned = _plan_clips(
-        profile, transcript, silences, candidates, clips_dir, db, kampanja_id, izvor_id, odbijeni
-    )
+    # Plan se računa jednom i sprema: nastavak mora rezati iste raspone pod istim rednim brojem,
+    # čak i ako se u međuvremenu nešto odobrilo ili se promijenio `refine` (pregled C3).
+    plan_path = work_dir / "plan.json"
+    if plan_path.is_file():
+        planned, odbijeni = _load_plan(plan_path, clips_dir)
+    else:
+        odbijeni = []
+        planned = _plan_clips(
+            profile, transcript, silences, candidates, clips_dir, db, kampanja_id, sha, odbijeni
+        )
+        _save_plan(plan_path, planned, odbijeni)
     for reason in odbijeni:
         log(f"rezanje: odbijen {reason}", "upozorenje")
     existing = {int(r["redni"]): r for r in db.isjecci(posao_id)}
@@ -351,12 +349,12 @@ def _plan_clips(
     clips_dir: Path,
     db: Database,
     kampanja_id: int,
-    izvor_id: int,
+    sha256: str,
     odbijeni: list[str],
 ) -> list[_PlannedClip]:
-    """Deterministički plan rezova (isti pri svakom nastavku): granica, duplikat, stil, ime."""
+    """Plan rezova: granica, duplikat (po sadržaju izvora, ne po URL-u), stil, ime."""
     rules = profile.isjecak.trajanje_s
-    committed = [r for r in db.published_ranges(kampanja_id) if r.izvor_id == izvor_id]
+    committed = db.published_ranges(kampanja_id)
     planned: list[_PlannedClip] = []
     for cand in sorted(candidates, key=lambda c: c.start_word_index):
         boundary = refine(
@@ -372,18 +370,10 @@ def _plan_clips(
                 f"„{cand.naslov}”: nema granice rečenice unutar {rules.min:g}–{rules.max:g} s"
             )
             continue
-        clash = next(
-            (
-                r
-                for r in committed
-                if _overlap(boundary.start_s, boundary.end_s, r.start_s, r.end_s)
-                > MAX_PUBLISHED_OVERLAP
-            ),
-            None,
-        )
+        clash = find_duplicate(committed, sha256, boundary.start_s, boundary.end_s)
         if clash is not None:
             odbijeni.append(
-                f"„{cand.naslov}”: duplikat, preklapa se više od {MAX_PUBLISHED_OVERLAP:.0%} s već "
+                f"„{cand.naslov}”: duplikat, preklapa se više od {MAX_DUPLICATE_OVERLAP:.0%} s već "
                 f"odobrenim ili objavljenim isječkom {clash.start_s:.0f}–{clash.end_s:.0f} s"
             )
             continue
@@ -393,6 +383,38 @@ def _plan_clips(
             _PlannedClip(redni, cand, boundary, stil, clips_dir / f"{redni:02d}_{stil}.mp4")
         )
     return planned
+
+
+def _save_plan(path: Path, planned: list[_PlannedClip], odbijeni: list[str]) -> None:
+    data = {
+        "isjecci": [
+            {
+                "redni": c.redni,
+                "kandidat": c.candidate.model_dump(),
+                "granica": asdict(c.boundary),
+                "stil": c.stil,
+                "datoteka": c.destination.name,
+            }
+            for c in planned
+        ],
+        "odbijeni": odbijeni,
+    }
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _load_plan(path: Path, clips_dir: Path) -> tuple[list[_PlannedClip], list[str]]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    planned = [
+        _PlannedClip(
+            redni=int(item["redni"]),
+            candidate=Candidate.model_validate(item["kandidat"]),
+            boundary=Boundary(**item["granica"]),
+            stil=str(item["stil"]),
+            destination=clips_dir / str(item["datoteka"]),
+        )
+        for item in data["isjecci"]
+    ]
+    return planned, [str(r) for r in data["odbijeni"]]
 
 
 def _part_path(clip: _PlannedClip) -> Path:

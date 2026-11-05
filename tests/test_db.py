@@ -115,3 +115,18 @@ def test_published_ranges_only_published(tmp_path: Path) -> None:
     assert cut
     ranges = {(r.izvor_id, r.start_s) for r in db.published_ranges(kampanja_id)}
     assert ranges == {(izvor_id, 100.0), (izvor_id, 200.0)}
+
+
+def test_recut_refreshes_text_and_review(tmp_path: Path) -> None:
+    db = _db(tmp_path)
+    _, _, posao = _posao(db)
+    clip = _add_clip(db, posao, 1, 0.0, 30.0)
+    db.set_isjecak_pregled(clip, 40, ["star problem"])
+    new = Candidate(start_word_index=0, end_word_index=9, naslov="novi", udica="nova", ocjena=90)
+    db.insert_isjecak(
+        posao, 1, new, start_word=0, end_word=9, start_s=0.0, end_s=28.0, path=Path("1.mp4"),
+        stil="bold_pop",
+    )  # fmt: skip
+    row = db.isjecci(posao)[0]
+    assert (row["naslov"], row["udica"], row["ocjena"]) == ("novi", "nova", 90)
+    assert row["pregled_ocjena"] is None and row["pregled_problemi_json"] == "[]"

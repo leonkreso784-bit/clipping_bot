@@ -41,11 +41,42 @@ def _now() -> str:
     return datetime.now().isoformat(timespec="seconds")
 
 
+#: Isječak koji se s obećanim ili objavljenim preklapa više od ovoga je duplikat (ADR-011).
+MAX_DUPLICATE_OVERLAP = 0.5
+
+
 @dataclass(frozen=True)
 class PublishedRange:
     izvor_id: int
     start_s: float
     end_s: float
+    izvor_sha256: str = ""
+    posao_id: str = ""
+
+
+def overlap_ratio(a_start: float, a_end: float, b_start: float, b_end: float) -> float:
+    """Zajedničko trajanje kao udio kraćeg od dva raspona."""
+    shared = min(a_end, b_end) - max(a_start, b_start)
+    if shared <= 0:
+        return 0.0
+    return shared / max(1e-6, min(a_end - a_start, b_end - b_start))
+
+
+def find_duplicate(
+    ranges: list[PublishedRange],
+    sha256: str,
+    start_s: float,
+    end_s: float,
+    *,
+    exclude_posao: str | None = None,
+) -> PublishedRange | None:
+    """Prvi obećani raspon istog sadržaja izvora (po hashu) koji se preklapa više od praga."""
+    for r in ranges:
+        if r.izvor_sha256 != sha256 or (exclude_posao is not None and r.posao_id == exclude_posao):
+            continue
+        if overlap_ratio(start_s, end_s, r.start_s, r.end_s) > MAX_DUPLICATE_OVERLAP:
+            return r
+    return None
 
 
 class Database:
@@ -215,8 +246,10 @@ class Database:
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'izrezan') "
                 "ON CONFLICT(posao_id, redni) DO UPDATE SET start_word = excluded.start_word, "
                 "end_word = excluded.end_word, start_s = excluded.start_s, end_s = excluded.end_s, "
-                "putanja = excluded.putanja, stil = excluded.stil, status = 'izrezan', "
-                "qa_ok = NULL, qa_nalazi_json = '[]'",
+                "putanja = excluded.putanja, stil = excluded.stil, naslov = excluded.naslov, "
+                "udica = excluded.udica, ocjena = excluded.ocjena, razlog = excluded.razlog, "
+                "opis = excluded.opis, status = 'izrezan', qa_ok = NULL, qa_nalazi_json = '[]', "
+                "pregled_ocjena = NULL, pregled_problemi_json = '[]'",
                 (
                     posao_id,
                     redni,
@@ -268,12 +301,14 @@ class Database:
         marks = ",".join("?" for _ in COMMITTED_STATUSES)
         with self.connect() as conn:
             rows = conn.execute(
-                "SELECT p.izvor_id, s.start_s, s.end_s FROM isjecak s "
+                "SELECT p.izvor_id, s.start_s, s.end_s, p.izvor_sha256, p.id FROM isjecak s "
                 "JOIN posao p ON p.id = s.posao_id JOIN izvor i ON i.id = p.izvor_id "
                 f"WHERE i.kampanja_id = ? AND s.status IN ({marks})",
                 (kampanja_id, *COMMITTED_STATUSES),
             ).fetchall()
-        return [PublishedRange(int(r[0]), float(r[1]), float(r[2])) for r in rows]
+        return [
+            PublishedRange(int(r[0]), float(r[1]), float(r[2]), str(r[3]), str(r[4])) for r in rows
+        ]
 
     # --- dnevnik ----------------------------------------------------------------------------
 

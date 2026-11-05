@@ -60,6 +60,11 @@ def resolve_claude_exe(exe: str | None = None) -> list[str]:
         )
         if native.is_file():
             return [str(native)]
+        if path.suffix:
+            raise SelectionError(
+                f"{path.name} je omotač za cmd.exe/PowerShell, a {native} ne postoji; "
+                "postavi CLIPPING_CLAUDE_EXE na claude.exe"
+            )
     return [str(path)]
 
 

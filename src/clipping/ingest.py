@@ -24,6 +24,7 @@ FORMAT_SORT = "res:1080,vcodec:h264"
 _CHANNEL_TAILS = ("/videos", "/streams", "/shorts", "/featured", "/live")
 _HANDLE = re.compile(r"/(@[A-Za-z0-9_.\-]+)")
 _SHA_CHUNK = 8 * 1024 * 1024
+_YOUTUBE_HOSTS = frozenset({"youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be"})
 
 
 class IngestError(RuntimeError):
@@ -101,19 +102,30 @@ def fetch_meta(url: str) -> VideoMeta:
 
 
 def is_allowed_source(url: str, profile: CampaignProfile, *, meta: VideoMeta | None = None) -> bool:
-    """Je li poveznica s kanala iz briefa. Handle u URL-u odlučuje bez mreže; inače metapodaci."""
+    """Je li poveznica s kanala iz briefa.
+
+    Odlučuju metapodaci videa (`uploader_url`/`channel_url`), nikad sam URL: `@handle` u putanji
+    služi samo za brzo odbijanje, jer yt-dlp prihvaća i oblike poput `/@dopusten#/watch?v=TUDJI`.
+    """
+    return check_source(url, profile, meta=meta) is not None
+
+
+def check_source(
+    url: str, profile: CampaignProfile, *, meta: VideoMeta | None = None
+) -> VideoMeta | None:
+    """Metapodaci videa ako je s dopuštenog kanala, inače `None` (vidi `is_allowed_source`)."""
     allowed = {normalize_channel(c) for c in profile.izvori.dopusteni_kanali}
     allowed_handles = {
         m.group(1).lower() for c in profile.izvori.dopusteni_kanali if (m := _HANDLE.search(c))
     }
-    host = urlparse(url.strip()).netloc.lower()
-    if host and not host.endswith(("youtube.com", "youtu.be")):
-        return False
-    handle = _HANDLE.search(urlparse(url.strip()).path)
-    if handle is not None:
-        return handle.group(1).lower() in allowed_handles
+    parsed = urlparse(url.strip())
+    if parsed.scheme not in ("http", "https") or parsed.netloc.lower() not in _YOUTUBE_HOSTS:
+        return None
+    handle = _HANDLE.search(parsed.path)
+    if handle is not None and handle.group(1).lower() not in allowed_handles:
+        return None
     found = meta if meta is not None else fetch_meta(url)
-    return any(channel in allowed for channel in found.channel_urls)
+    return found if any(channel in allowed for channel in found.channel_urls) else None
 
 
 def list_channel_videos(channel_url: str, *, limit: int = 20) -> list[VideoMeta]:

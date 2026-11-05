@@ -82,6 +82,7 @@ class Fakes:
             raise KeyboardInterrupt  # kao Ctrl+C usred rezanja
         self.calls["export"] += 1
         assert request.destination.name.endswith(".part.mp4")
+        assert not request.destination.exists()  # ostatak prekida mora biti obrisan prije izvoza
         return export_module.export_clip(request, work_dir=work_dir)
 
     def review(self, text: str, profile: CampaignProfile, frames: list[Path], **kw: Any) -> Review:
@@ -172,3 +173,20 @@ def test_duplicate_over_half_rejected(env: Any) -> None:
     assert len(rows) == 1 and rows[0]["naslov"] == "k10"
     assert any("duplikat" in r for r in second.odbijeni)
     assert "duplikat" in second.pregled.read_text(encoding="utf-8")
+
+
+def test_resume_uses_saved_plan_after_approval_elsewhere(env: Any) -> None:
+    """Pregled C3: odobrenje drugog posla prije nastavka ne smije pomaknuti redne brojeve."""
+    profile, db, root, video = env
+    job_a = run_job(profile, str(video), db=db, root=root, services=Fakes().services())
+
+    killed = Fakes()
+    killed.fail_export_after = 1
+    with pytest.raises(KeyboardInterrupt):
+        run_job(profile, str(video), db=db, root=root, services=killed.services())
+    db.set_isjecak_status(int(db.isjecci(job_a.posao_id)[0]["id"]), "odobren")
+
+    resumed = Fakes()
+    job_b = run_job(profile, str(video), db=db, root=root, services=resumed.services())
+    assert job_b.posao_id != job_a.posao_id and resumed.calls["export"] == 1
+    assert [r["naslov"] for r in db.isjecci(job_b.posao_id)] == ["k0", "k10"]

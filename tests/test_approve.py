@@ -99,3 +99,26 @@ def test_opis_contains_paid_partnership(tmp_path: Path) -> None:
     text = build_opis(bare, udica="Hook", naslov="n", opis="", url_izvora="")
     assert "Paid partnership with Testni Kreator" in text and text.rstrip().endswith("#ad")
     assert "{nepoznato}" in text
+
+
+def test_duplicate_across_jobs_not_approved(tmp_path: Path) -> None:
+    """Pregled C3: dva posla istog izvora s istim trenutkom; drugi se ne odobrava."""
+    profile = _profile(tmp_path, ["tiktok"])
+    db, first = _job(tmp_path, profile, [True])
+    izvor_id = int(db.posao(first)["izvor_id"])
+    second = db.create_posao(izvor_id, ["tiktok"])
+    clip = tmp_path / "izlaz" / second / "isjecci" / "01_bold_pop.mp4"
+    clip.parent.mkdir(parents=True)
+    clip.write_bytes(b"mp4")
+    cand = Candidate(start_word_index=0, end_word_index=5, naslov="n", udica="u", ocjena=60)
+    clip_id = db.insert_isjecak(
+        second, 1, cand, start_word=0, end_word=5, start_s=105.0, end_s=130.0, path=clip,
+        stil="bold_pop",
+    )  # fmt: skip
+    db.set_isjecak_qa(clip_id, True, [])
+
+    approve(first, izbaci=set(), db=db, root=tmp_path, profile=profile)
+    result = approve(second, izbaci=set(), db=db, root=tmp_path, profile=profile)
+    assert result.odobreni == [] and result.duplikati == [1]
+    assert not list((tmp_path / "izlaz" / "mobitel").rglob(f"{second}-*"))
+    assert not list((tmp_path / "izlaz" / "mobitel").rglob("*.part"))

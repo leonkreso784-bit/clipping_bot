@@ -53,7 +53,7 @@ def kreni(
 ) -> None:
     """Pokreni (ili nastavi) posao od izvora do mape za pregled."""
     from clipping.db import Database
-    from clipping.ingest import IngestError, is_allowed_source, pick_new_video
+    from clipping.ingest import IngestError, check_source, pick_new_video
     from clipping.select.claude_runner import SelectionError
 
     profile = _load(korijen, kampanja)
@@ -74,11 +74,14 @@ def kreni(
                 raise _fail("nema novog videa na dopuštenim kanalima kampanje", code=1)
             typer.echo(f"izabran najnoviji neobrađeni video: {video.title} ({video.url})")
             izvor = video.url
-        elif not Path(izvor).is_file() and not is_allowed_source(izvor, profile):
-            raise _fail(
-                f"izvor {izvor} nije s dopuštenog kanala kampanje "
-                f"({', '.join(profile.izvori.dopusteni_kanali)}); ADR-004"
-            )
+        elif not Path(izvor).is_file():
+            meta = check_source(izvor, profile)
+            if meta is None:
+                raise _fail(
+                    f"izvor {izvor} nije s dopuštenog kanala kampanje "
+                    f"({', '.join(profile.izvori.dopusteni_kanali)}); ADR-004"
+                )
+            izvor = meta.url  # dalje ide samo provjereni kanonski URL videa
         result = run_job(
             profile,
             izvor,
