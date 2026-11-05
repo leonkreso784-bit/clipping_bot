@@ -1,26 +1,22 @@
 # Predaja za sljedeću sesiju
 
-**Napisano:** 2026-11-04 (navečer). Kad se sesija odradi, sadržaj se zamjenjuje novom predajom.
+**Napisano:** 2026-11-05. Kad se sesija odradi, sadržaj se zamjenjuje novom predajom.
 
 ## Stanje
 
-- Smjer projekta promijenjen: **plaćene clipping kampanje za druge kreatore** (Clipping.net), engleski, globalno.
-  Vlastiti kanal i GTA 6 su parkirani (ADR-007).
-- Odrađena proba s autoclipom na Caleb Hammer videu: `docs/istrazivanje/PROBA_AUTOCLIP.md`. Isječci u
-  `izlaz/proba-2026-11-04-caleb-hammer/` (izvan gita). Leon: trenuci u redu, titlovi odlični, skakanje kadra ne smeta.
-- Dizajn napisan: `docs/superpowers/specs/2026-11-04-clipping-alat-design.md`. Prošao neovisni pregled graditelja.
-  **Leon odobrio 4. 11. 2026.** Psovke: zvjezdice u titlovima, zvuk netaknut.
-- Plan izvedbe C0 do C3 odobren: `docs/superpowers/plans/2026-11-04-clipping-cjevovod-c0-c3.md`.
-- **C0 gotova** na grani `feature/c0` (kostur paketa, preflight, ffmpeg omotač). Čeka Leonov OK za spajanje u `main` i početak C1.
-- Scratchpad probe (autoclip venv, izvorni video, audio.wav, Whisperov transcript.json) ostaje: C1 ga kopira u `data/izvori/JvLklMRThYs/`.
+- Dizajn i plan C0 do C3 odobreni (4. 11.). C0 spojena u `main` (91a2b63).
+- **C1 gotova i spojena**: `transcript.py`, `audio.py`, `asr.py` (Parakeet kroz onnx-asr), skripta
+  `scripts/mjeri_prijepis.py`, zlatni video u `data/izvori/JvLklMRThYs/` (izvan gita). Pregled opusom odrađen,
+  dva popravka ugrađena (token razmaka otvara riječ, zajednički kursor vremena).
+- Leon 5. 11.: OK na C1, 22 min prijepisa prihvaćeno (ADR-008 ✅). C1 spojena u `main`. Otvoreno u BACKLOG-u
+  „Čeka Leona": licence `tqdm` i `pathspec` (MPL-2.0), `license = "MIT"` u pyproject.
+- Ništa nije pushano.
 
 ## Redoslijed na početku sesije
 
 1. `git status` i `git log --oneline -5`.
-2. Pročitaj dizajn i `docs/records/BACKLOG.md` (odjeljak „Čeka Leona").
-3. Ako je `feature/c0` još nespojena: pitaj Leona za OK, spoji u `main` (bez pusha).
-4. Zatim `/brick C1` (zadaci 3 do 6 iz plana; prvo kopirati probu u `data/izvori/JvLklMRThYs/`).
-5. Jedna cigla odjednom, dokaz prije tvrdnje, stani za OK.
+2. `/brick C2` (zadaci 7 do 14 iz `docs/superpowers/plans/2026-11-04-clipping-cjevovod-c0-c3.md`).
+3. Jedna cigla odjednom, dokaz prije tvrdnje, stani za OK.
 
 ## Prompt za početak
 

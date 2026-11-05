@@ -4,7 +4,8 @@
 
 | pitanje | zašto je važno |
 |---|---|
-| OK za dizajn `docs/superpowers/specs/2026-11-04-clipping-alat-design.md` | bez toga nema plana cigli ni koda |
+| Licence izvan pravila 8 u ovisnostima: `pathspec` 1.1.1 (MPL-2.0, samo dev kroz mypy) i `tqdm` 4.70.1 (MPL-2.0 AND MIT, posredno kroz huggingface-hub za traku skidanja) | ostaju ili se mijenja alat / skidanje modela |
+| `pyproject.toml` deklarira `license = "MIT"` za Leonov projekt | privatni alat; jedan redak ako treba drukčije |
 | Računi: Gmail + Caleb Hammer (TikTok, Instagram poslovni + Facebook stranica, X), ClubWPT Gold (Instagram, YouTube); povezati na Clipping.net; PayPal; pridružiti se kampanjama | C4 i prva stvarna serija |
 | Prvi tjedan ručno 1 do 2 objave dnevno s mobitela (zagrijavanje računa) | API objava tek na računima s poviješću |
 | Vrijeme za pregled serije dnevno | određuje veličinu serije i raspored |
@@ -14,9 +15,13 @@
 
 ## Provjeriti tehnički
 
+| što | gdje |
+|---|---|
+| Parakeet 22 min za 90 min zvuka, broj niti ne mijenja vrijeme: profilirati (VAD, enkoder, TDT dekoder, onnxruntime int8/fp16 inačica modela) | C1 mjerenje, ADR-008 |
+| Zadnja riječ VAD segmenta traje do kraja segmenta; token „▁-" postaje samostalna riječ; putanje modela i zlatnog zvuka relativne na radni direktorij | pregled C1, `asr.py` |
+
 | stavka | cigla |
 |---|---|
-| Parakeet TDT 0.6B v3: licenca (NVIDIA Open Model License) dopušta komercijalnu uporabu; onnx-asr daje vremena riječi; brzina na Leonovu CPU-u | C1 |
 | Rezerva ako Parakeet padne: faster-whisper `medium` s 12 niti (autoclip je koristio 1 do 4) | C1 |
 | MediaPipe na Pythonu 3.12 na Windowsu (proba: radi u autoclip venvu na 3.11) | C2 |
 | Instagram `paid partnership` oznaka kroz Graph API: koje polje, za koje račune | C4 |

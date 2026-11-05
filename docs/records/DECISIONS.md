@@ -71,14 +71,30 @@ parkirani (BACKLOG).
 objavljuje na platformi koju kampanja ne plaća. Zapis prava = kampanja + brief + datum (ADR-004).
 
 ## ADR-008 — Prijepis: Parakeet TDT na CPU-u umjesto Whispera
-**Datum:** 2026-11-04 · **Status:** prijedlog, potvrđuje cigla C1 (mjerenje i licenca)
+**Datum:** 2026-11-04 · **Status:** ✅ Leon 5. 11. 2026. (C1: licenca prolazi; 22 min po videu od 90 min prihvaćeno umjesto cilja 10; ubrzanje u BACKLOG-u)
 
 **Kontekst.** Proba: faster-whisper `large-v3-turbo` na Leonovu CPU-u (12 jezgri, bez grafičke) trajao je 103 minute
 za 90 minuta videa i koristio 1 do 4 jezgre.
 
 **Odluka.** Prijepis radi NVIDIA Parakeet TDT 0.6B v3 kroz `onnx-asr` (bez torcha), s VAD-om u dijelovima.
-Uvjet: ispod 10 minuta za zlatni video i licenca (NVIDIA Open Model License) dopušta komercijalnu uporabu.
-Rezerva: faster-whisper `medium` s 12 niti.
+Uvjet: ispod 10 minuta za zlatni video i licenca dopušta komercijalnu uporabu.
+**Licenca (C1, 5. 11. 2026.):** kartica `nvidia/parakeet-tdt-0.6b-v3` i ONNX pretvorba `istupakov/parakeet-tdt-0.6b-v3-onnx`
+obje kažu CC-BY-4.0 („GOVERNING TERMS: Use of this model is governed by the CC-BY-4.0 license“, „ready for
+commercial/non-commercial use“). Prolazi pravilo 8; navođenje autora je u `THIRD_PARTY_LICENSES.md`.
+**Mjerenje (C1, 5. 11. 2026., zlatni video 90 min, `scripts/mjeri_prijepis.py`):**
+
+| motor | niti | vrijeme | riječi | podudaranje s Whisper turbo referencom (prvih 300 s) |
+|---|---|---|---|---|
+| Parakeet TDT 0.6B v3 (onnx-asr) | 12 | 1452 s | 16853 | 0.908 |
+| Parakeet TDT 0.6B v3 (onnx-asr) | 6 | 1409 s | 16853 | 0.908 |
+| Parakeet TDT 0.6B v3 (onnx-asr) | zadano | **1322 s** | 16853 | 0.908 |
+| rezerva: faster-whisper medium int8 | 12 | 7197 s | 16702 | 0.962 |
+
+Ni jedan motor ne ulazi u 10 minuta. Parakeet je 5,4 puta brži od rezerve i 4,7 puta brži od turba iz probe
+(103 min); broj niti ne mijenja vrijeme, pa je usko grlo nešto drugo (BACKLOG). Podudaranje rezerve je više
+jer je referenca također Whisper. **Parakeet ostaje**; rezerva se ne ugrađuje (faster-whisper vuče PyAV s
+FFmpeg binarnim datotekama i nije potreban). Prag od 10 minuta nije ispunjen: Leon odlučuje prihvaća li
+22 minute po videu od 90 minuta ili se traži ubrzanje (BACKLOG).
 
 **Posljedice.** Isti oblik izlaza kao u probi (riječi s vremenima). Cenzura psovki više ne dolazi besplatno iz
 modela; program ima popis riječi.

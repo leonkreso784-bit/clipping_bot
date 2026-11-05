@@ -17,7 +17,7 @@ Iz tog repozitorija **ne kopiramo kod** dok vlasništvo nije pisano dogovoreno (
 
 ## Stanje
 
-**Cigla C0 u tijeku** (grana `feature/c0`). Dizajn `docs/superpowers/specs/2026-11-04-clipping-alat-design.md` je odobren (4. 11. 2026.); plan cigli
+**C0 i C1 spojene u `main`; cigla C2 u tijeku** (grana `feature/c2`, zadaci 7 do 14). Dizajn `docs/superpowers/specs/2026-11-04-clipping-alat-design.md` je odobren (4. 11. 2026.); plan cigli
 `docs/plan/PLAN_V1.md` i `docs/superpowers/plans/` se razrađuju iz njega. Proba s autoclipom: `docs/istrazivanje/PROBA_AUTOCLIP.md`.
 **Svaku sesiju počni od `docs/records/SLJEDECA_SESIJA.md`.**
 
@@ -34,7 +34,7 @@ Iz tog repozitorija **ne kopiramo kod** dok vlasništvo nije pisano dogovoreno (
 7. **Samo službeni API-ji za objavu.** Nikad instagrapi, tiktok-uploader ili automatizacija preglednika (ADR-006).
    TikTok i X idu ručno iz pripremljene mape (ADR-010). Jedan račun po kreatoru, oznaka plaćene suradnje uvijek (ADR-011).
 8. **Ovisnosti se pinaju točno**, samo permisivne licence (MIT, Apache-2.0, BSD); GPL/AGPL ne ulaze. Težine
-   modela i fontovi moraju dopuštati komercijalnu uporabu (CC-BY, NVIDIA Open Model License, OFL prolaze;
+   modela i fontovi moraju dopuštati komercijalnu uporabu (CC-BY, OFL prolaze;
    nekomercijalni i "research only" ne).
 9. **Tajne, izvorni mediji i izlazni videi ne ulaze u git.** Push traži Leonov izričit OK.
 10. **Jedna činjenica, jedno mjesto.** Duplikat se briše, ne sinkronizira.
