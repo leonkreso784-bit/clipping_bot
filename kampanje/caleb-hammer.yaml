@@ -1,0 +1,30 @@
+# Profil kampanje Caleb Hammer (Clipping.net). Računi su prazni dok ih Leon ne otvori.
+slug: caleb-hammer
+kreator: Caleb Hammer
+platforma_kampanje: clipping.net
+url_kampanje: https://clipping.net/
+cijena_po_100k_usd: 75
+prag_kvalifikacije_pregleda: 50000
+platforme: [tiktok, instagram, x]          # gdje se plaća; alat ne objavljuje drugdje
+racuni: {}                                 # npr. instagram: "@..." kad račun postoji
+izvori:
+  dopusteni_kanali: ["https://www.youtube.com/@CalebHammer"]
+  zapis_prava: "brief Clipping.net, kampanja Caleb Hammer (datum i poveznicu upisati pri prijavi)"
+isjecak:
+  trajanje_s: {min: 20, max: 90}
+  jezik: en
+grafika:
+  zig: {datoteka: kampanje/caleb-hammer/zig.png, polozaj: centar, neprozirnost: 0.85}
+  obvezni_tekst: null
+  obvezni_zvuk: null
+  hashtagovi: ["#calebhammer", "#ad"]
+opis:
+  oznaka_placene_suradnje: true
+  predlozak: "{udica}\n\nPaid partnership with Caleb Hammer. Full episode: {url_izvora}\n{hashtagovi}"
+pravila_sadrzaja:
+  zabranjeno: ["ismijavanje gosta izvan onoga što sam kaže"]
+  stil_titlova: [bold_pop, clean_lower]    # rotira se po isječku
+  psovke: {titlovi: zvjezdice, zvuk: nista} # Leon, 4. 11. 2026.
+raspored:
+  objava_dnevno_po_racunu: 2
+  zagrijavanje_dana: 7
