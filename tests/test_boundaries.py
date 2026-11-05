@@ -58,3 +58,12 @@ def test_refine_cap_never_cuts_last_word() -> None:
     b = refine(t, 0, 89, silences=[Silence(8.0, 9.4)], min_duration_s=20, max_duration_s=90)
     assert b is not None
     assert b.end_s >= 99.95 and b.end_s - b.start_s <= 90 + 1e-6
+
+
+def test_align_start_never_after_first_word() -> None:
+    """Tišina koja završava iza početka prve riječi ne smije pomaknuti rez u riječ (dokaz C3)."""
+    from clipping.boundaries import align_start
+
+    # Prava situacija iz zlatnog videa: riječ „I" počinje 1157.88, tišina je 1157.9–1158.4.
+    assert align_start(1157.88, [Silence(1157.9, 1158.4)]) <= 1157.88
+    assert align_start(10.0, [Silence(9.0, 9.8)]) <= 10.0

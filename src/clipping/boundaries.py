@@ -152,13 +152,17 @@ def _clamp_duration(
 
 
 def align_start(start_s: float, silences: list[Silence]) -> float:
-    """Povuci početak u tišinu ispred prve riječi."""
+    """Povuci početak u tišinu ispred prve riječi; nikad iza početka prve riječi.
+
+    Tišina može završiti iza početka riječi (detektor tišine i vremena riječi se ne slažu na
+    nekoliko stotinki): tada bi `earliest` pao usred riječi i rez bi je odsjekao (dokaz C3, 5. 11.).
+    """
     silence = _closest(silences, start_s, key=lambda s: s.end)
     if silence is None:
         return max(0.0, start_s - FALLBACK_LEAD_S)
     earliest = min(silence.start + SILENCE_MARGIN_S, silence.end)
     preferred = silence.end - SILENCE_LEAD_S
-    return max(0.0, max(earliest, min(preferred, start_s)))
+    return max(0.0, min(start_s, max(earliest, min(preferred, start_s))))
 
 
 def align_end(end_s: float, silences: list[Silence]) -> float:
