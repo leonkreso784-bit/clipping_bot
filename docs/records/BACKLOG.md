@@ -4,7 +4,7 @@
 
 | pitanje | zašto je važno |
 |---|---|
-| Licence izvan pravila 8 u ovisnostima: `pathspec` 1.1.1 (MPL-2.0, samo dev kroz mypy) i `tqdm` 4.70.1 (MPL-2.0 AND MIT, posredno kroz huggingface-hub za traku skidanja) | ostaju ili se mijenja alat / skidanje modela |
+| Licence izvan pravila 8 u ovisnostima: `pathspec` 1.1.1 (MPL-2.0, samo dev kroz mypy), `tqdm` 4.70.1 (MPL-2.0 AND MIT, posredno kroz huggingface-hub za traku skidanja), `certifi` (MPL-2.0, CA certifikati za HTTPS) | ostaju ili se mijenja alat / skidanje modela |
 | `pyproject.toml` deklarira `license = "MIT"` za Leonov projekt | privatni alat; jedan redak ako treba drukčije |
 | Računi: Gmail + Caleb Hammer (TikTok, Instagram poslovni + Facebook stranica, X), ClubWPT Gold (Instagram, YouTube); povezati na Clipping.net; PayPal; pridružiti se kampanjama | C4 i prva stvarna serija |
 | Prvi tjedan ručno 1 do 2 objave dnevno s mobitela (zagrijavanje računa) | API objava tek na računima s poviješću |

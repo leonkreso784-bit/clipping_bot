@@ -137,13 +137,18 @@ def _iter_frames(
         end_frame = int(end_s * source_fps)
         capture.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
         frame_index = start_frame
-        while True:
+        while frame_index < end_frame:
+            # Neuzorkovani kadrovi se samo preskoče (`grab`), bez pretvorbe u sliku.
+            if (frame_index - start_frame) % step != 0:
+                if not capture.grab():
+                    break
+                frame_index += 1
+                continue
             ok, frame = capture.read()
-            if not ok or frame_index >= end_frame:
+            if not ok:
                 break
-            if (frame_index - start_frame) % step == 0:
-                timestamp = frame_index / source_fps - start_s
-                yield timestamp, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), width, height
+            timestamp = frame_index / source_fps - start_s
+            yield timestamp, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), width, height
             frame_index += 1
     finally:
         capture.release()

@@ -31,3 +31,10 @@ def test_slice_and_text_between() -> None:
 def test_empty_transcript_is_safe() -> None:
     t = Transcript([], "en", "x")
     assert t.duration == 0.0 and t.time_range(0, 0) == (0.0, 0.0) and t.slice(0, 5) == []
+
+
+def test_indices_in_range_picks_words_inside_window() -> None:
+    t = Transcript([Word("a", 0, 1), Word("b", 1, 2), Word("c", 2, 3), Word("d", 3, 4)], "en", "x")
+    assert t.indices_in_range(0.9, 3.1) == (1, 2)  # b i c leže unutar [0.9, 3.1]
+    assert t.indices_in_range(1.5, 1.6) is None  # nijedna riječ cijela unutra
+    assert t.indices_in_range(-1, 99) == (0, 3)
